@@ -6,12 +6,25 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct HomeView: View {
     @StateObject private var homeViewModel = HomeViewModel()
     @State private var searchOpened: Bool = false
     @State private var searchText: String = ""
-        
+    @Binding var selectedTab: Int
+    
+    // Add observer for language changes
+    @ObservedObject private var localization = LocalizationObserver()
+    
+    private func buildDishCards() -> [AnyView] {
+        return homeViewModel.featuredDishes.map { dish in
+            AnyView(
+                HomeDishCard(dish: dish, height: 250)
+            )
+        }
+    }
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -27,52 +40,36 @@ struct HomeView: View {
                         }
                     })
                     .padding(.horizontal)
-                    .padding(.top, 10)
+                    .padding(.vertical, 10)
                     
                     HomeSearchResult(isOpen: searchOpened)
                     
                     ScrollView {
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: 12) {
                             // Featured dishes carousel
                             VStack(alignment: .leading) {
-                                Text("Featured Dishes")
+                                LocalizedText("featured_dishes")
                                     .font(.headline)
                                     .padding(.leading)
                                 
                                 if homeViewModel.featuredDishes.isEmpty && !homeViewModel.isLoading {
-                                    Text("No dishes found")
+                                    LocalizedText("no_results")
                                         .foregroundColor(.gray)
                                         .padding()
                                         .frame(maxWidth: .infinity, alignment: .center)
                                 } else {
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        HStack(spacing: 15) {
-                                            ForEach(homeViewModel.featuredDishes) { dish in
-                                                DishCard(dish: dish)
-                                            }
-                                        }
-                                        .padding(.horizontal)
-                                    }
+                                    Carousel(buildDishCards(), spacing: 16, itemWidth: UIScreen.main.bounds.width - 32, height: 250)
                                 }
                             }
                             
+                            HomeGameSection()
+                            
+                            HomeBanner(selectedTab: $selectedTab)
+                            
                             // Recent dishes section
-                            VStack(alignment: .leading) {
-                                Text("Recent Dishes")
-                                    .font(.headline)
-                                    .padding(.leading)
-                                
-                                if homeViewModel.recentDishes.isEmpty && !homeViewModel.isLoading {
-                                    Text("No recent dishes")
-                                        .foregroundColor(.gray)
-                                        .padding()
-                                        .frame(maxWidth: .infinity, alignment: .center)
-                                } else {
-                                    ForEach(homeViewModel.recentDishes) { dish in
-                                        DishRow(dish: dish)
-                                    }
-                                }
-                            }
+                            RecentDishes(dishes: homeViewModel.recentDishes)
+                            
+                            HomeContactSection().padding(.top)
                         }
                         .padding(.vertical)
                     }
@@ -81,32 +78,18 @@ struct HomeView: View {
                     }
                 }
                 
-                // Loading overlay
+                // Loading indicator
                 if homeViewModel.isLoading {
-                    Color.black.opacity(0.3)
-                        .edgesIgnoringSafeArea(.all)
-                        .overlay(
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                .scaleEffect(1.5)
-                        )
-                }
-                
-                // Error message
-                if let errorMessage = homeViewModel.errorMessage {
-                    VStack {
-                        Spacer()
-                        Text(errorMessage)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.red.opacity(0.8))
-                            .cornerRadius(8)
-                            .padding()
-                        Spacer().frame(height: 40)
+                    ProgressView {
+                        LocalizedText("loading")
                     }
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .background(Color(.systemBackground).opacity(0.7))
+                    .cornerRadius(10)
+                    .padding(20)
                 }
             }
-            .navigationTitle("What to Eat")
+            .navigationTitle(LocalizationService.shared.localizedString(for: "home_title"))
             .onAppear {
                 if homeViewModel.featuredDishes.isEmpty {
                     homeViewModel.loadRandomDishes(limit: 10)
@@ -117,5 +100,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    HomeView(selectedTab: .constant(0))
 }

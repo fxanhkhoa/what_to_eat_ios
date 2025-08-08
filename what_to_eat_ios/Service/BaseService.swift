@@ -9,11 +9,7 @@ import Foundation
 
 struct APIConstants {
     static let baseURL = "https://api.eatwhat.io.vn"
-    
-    struct Endpoints {
-        static let dishes = "/dish"
-    }
-    
+      
     struct Headers {
         static let contentType = "Content-Type"
         static let applicationJSON = "application/json"

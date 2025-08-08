@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SettingView: View {
     @EnvironmentObject private var themeManager: ThemeManager
+    @ObservedObject private var localizationObserver = LocalizationObserver()
+    @State private var selectedLanguage: Language = LocalizationService.shared.currentLanguage
     
     var body: some View {
         NavigationView {
@@ -42,6 +44,25 @@ struct SettingView: View {
                         }
                     }
                     .tint(AppColors.accent)
+                }
+                
+                // Add Language Section
+                Section(header: Text("Language")) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Select Language")
+                            .fontWeight(.medium)
+                            
+                        Picker("Language", selection: $selectedLanguage) {
+                            Text("English").tag(Language.english)
+                            Text("Tiếng Việt").tag(Language.vietnamese)
+                        }
+                        .pickerStyle(.segmented)
+                        .padding(.vertical, 5)
+                        .onChange(of: selectedLanguage) { oldValue, newValue in
+                            LocalizationService.shared.setLanguage(newValue)
+                        }
+                    }
+                    .padding(.vertical, 5)
                 }
                 
                 Section(header: Text("About")) {

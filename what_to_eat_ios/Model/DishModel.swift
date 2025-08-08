@@ -37,9 +37,9 @@ struct Dish: Codable, Identifiable {
     let mealCategories: [String]
     let ingredientCategories: [String]
     let thumbnail: String?
-    let videos: [String]
+    let videos: [String]?
     let ingredients: [IngredientsInDish]
-    let relatedDishes: [String]?
+    let relatedDishes: [String?]?
     let labels: [String]?  // Changed to optional array
     
     enum CodingKeys: String, CodingKey {
@@ -80,20 +80,26 @@ struct Dish: Codable, Identifiable {
         ingredientCategories = try container.decodeIfPresent([String].self, forKey: .ingredientCategories) ?? []
         videos = try container.decodeIfPresent([String].self, forKey: .videos) ?? []
         ingredients = try container.decodeIfPresent([IngredientsInDish].self, forKey: .ingredients) ?? []
-        relatedDishes = try container.decodeIfPresent([String].self, forKey: .relatedDishes) ?? []
+        
+        // Fix for relatedDishes - handle null values within the array
+        if let relatedDishesArray = try? container.decodeIfPresent([String?].self, forKey: .relatedDishes) {
+            relatedDishes = relatedDishesArray
+        } else {
+            relatedDishes = []
+        }
         
         // The problematic field - handle completely null value
         labels = try container.decodeIfPresent([String].self, forKey: .labels)
     }
     
-    // Regular init for creating instances in code
-    init(id: String, deleted: Bool, createdAt: String?, updatedAt: String?, createdBy: String?,
-         updatedBy: String?, deletedBy: String?, deletedAt: String?, slug: String,
+    // Also update the init signature to match
+    init(id: String, deleted: Bool = false, createdAt: String? = nil, updatedAt: String? = nil, createdBy: String? = nil,
+         updatedBy: String? = nil, deletedBy: String? = nil, deletedAt: String? = nil, slug: String,
          title: [MultiLanguage<String>], shortDescription: [MultiLanguage<String>],
-         content: [MultiLanguage<String>], tags: [String], preparationTime: Int?,
-         cookingTime: Int?, difficultLevel: String?, mealCategories: [String],
-         ingredientCategories: [String], thumbnail: String?, videos: [String],
-         ingredients: [IngredientsInDish], relatedDishes: [String], labels: [String]?) {
+         content: [MultiLanguage<String>], tags: [String] = [], preparationTime: Int? = nil,
+         cookingTime: Int? = nil, difficultLevel: String? = nil, mealCategories: [String] = [],
+         ingredientCategories: [String] = [], thumbnail: String? = nil, videos: [String]? = nil,
+         ingredients: [IngredientsInDish] = [], relatedDishes: [String?]? = nil, labels: [String]? = nil) {
         
         self.id = id
         self.deleted = deleted
@@ -118,6 +124,18 @@ struct Dish: Codable, Identifiable {
         self.ingredients = ingredients
         self.relatedDishes = relatedDishes
         self.labels = labels
+    }
+    
+    func getTitle(for language: String) -> String? {
+        return title.first { $0.lang == language }?.data
+    }
+    
+    func getShortDescription(for language: String) -> String? {
+        return shortDescription.first { $0.lang == language }?.data
+    }
+    
+    func getContent(for language: String) -> String? {
+        return content.first { $0.lang == language }?.data
     }
 }
 

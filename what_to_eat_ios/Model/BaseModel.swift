@@ -25,6 +25,22 @@ struct BaseModel: Codable, Identifiable {
 struct MultiLanguage<T: Codable>: Codable {
     let lang: String
     let data: T
+    
+    // Get localized data from array of MultiLanguage objects
+    static func getLocalizedData(from items: [MultiLanguage<T>], for language: String, fallbackLanguage: String = "en") -> T? {
+        // First try to find exact match for requested language
+        if let match = items.first(where: { $0.lang == language }) {
+            return match.data
+        }
+        
+        // If no match, try fallback language
+        if let fallback = items.first(where: { $0.lang == fallbackLanguage }) {
+            return fallback.data
+        }
+        
+        // If still no match, return the first item or nil
+        return items.first?.data
+    }
 }
 
 // Generic model for paginated API responses

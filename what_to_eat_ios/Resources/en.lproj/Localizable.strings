@@ -1,0 +1,71 @@
+/*
+  Localizable.strings
+  what_to_eat_ios
+
+  Created on 5/8/25.
+  
+*/
+
+// Common
+"app_name" = "What to Eat";
+"loading" = "Loading...";
+"error" = "Error";
+"retry" = "Retry";
+"cancel" = "Cancel";
+"ok" = "OK";
+
+// Home Screen
+"home_title" = "Home";
+"featured_dishes" = "Featured Dishes";
+"popular_dishes" = "Popular Dishes";
+"search_dishes" = "Search dishes...";
+"no_results" = "No results found";
+"see_all" = "See All";
+
+// Dish Details
+"ingredients" = "Ingredients";
+"instructions" = "Instructions";
+"reviews" = "Reviews";
+"related_dishes" = "You may also like";
+
+// Settings
+"settings" = "Settings";
+"language" = "Language";
+"dark_mode" = "Dark Mode";
+"notifications" = "Notifications";
+"about" = "About";
+"version" = "Version";
+
+// Game
+"game_title" = "Food Game";
+"start_game" = "Start Game";
+"game_over" = "Game Over";
+"play_again" = "Play Again";
+"your_score" = "Your Score: %d";
+"game_section_title" = "Food Games";
+
+"untitle" = "Untitled";
+"home_banner_title" = "Hungry? Eat What";
+"home_banner_subtitle" = "Unlock a world of dining options and find your next meal, conveniently and wherever you are.";
+"find_your_meal" = "Find Your Meal";
+"mins" = "mins";
+"wheel_of_fortune" = "Wheel of Fortune";
+"wheel_of_fortune_desc" = "Spin the wheel to discover your next meal!";
+"flipping_card" = "Flipping Card";
+"flipping_card_desc" = "Flip cards to reveal delicious dishes!";
+"vote_game" = "Vote Game";
+"vote_game_desc" = "Vote for your favorite dishes and see what others think!";
+
+// Contact Section
+"contact_us" = "Contact Us";
+"name" = "Name";
+"email" = "Email";
+"message" = "Message";
+"send_message" = "Send Message";
+"or_contact_directly" = "Or Contact Us Directly";
+"follow_us" = "Follow Us On";
+"name_required" = "Please enter your name";
+"valid_email_required" = "Please enter a valid email";
+"message_required" = "Please enter your message";
+"message_sent_success" = "Your message has been sent successfully!";
+"success" = "Success";
