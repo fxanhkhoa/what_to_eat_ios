@@ -65,6 +65,17 @@ enum DifficultyLevel: String, Codable, CaseIterable, Identifiable {
         }
     }
     
+    var svgIconName: String {
+        switch self {
+        case .easy:
+            return "easy"
+        case .medium:
+            return "medium"
+        case .hard:
+            return "hard"
+        }
+    }
+    
     /// Get DifficultyLevel from a string, defaulting to .easy if invalid
     static func from(_ string: String?) -> DifficultyLevel {
         guard let string = string,

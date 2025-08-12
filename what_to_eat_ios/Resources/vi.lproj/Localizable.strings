@@ -23,8 +23,17 @@
 "see_all" = "Xem tất cả";
 
 // Dish Details
-"ingredients" = "Nguyên liệu";
-"instructions" = "Cách làm";
+"description" = "Mô Tả";
+"ingredients" = "Nguyên Liệu";
+"instructions" = "Hướng Dẫn";
+"tags" = "Thẻ";
+"preparation" = "Chuẩn Bị";
+"cooking" = "Nấu";
+"servings" = "Khẩu Phần";
+"mins" = "phút";
+"recipe_content" = "Công Thức";
+"meal_categories" = "Loại Bữa Ăn";
+"ingredient_categories" = "Loại Nguyên Liệu";
 "reviews" = "Đánh giá";
 "related_dishes" = "Có thể bạn sẽ thích";
 

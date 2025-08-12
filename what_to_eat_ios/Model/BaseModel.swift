@@ -54,3 +54,11 @@ struct PagingDto: Codable {
     let page: Int?
     let limit: Int?
 }
+
+enum NetworkError: Error {
+    case invalidURL
+    case noData
+    case decodingError(Error)
+    case serverError(statusCode: Int)
+    case unknownError
+}

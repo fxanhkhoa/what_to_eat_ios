@@ -28,6 +28,19 @@
 "reviews" = "Reviews";
 "related_dishes" = "You may also like";
 
+// Dish Detail View
+"description" = "Description";
+"ingredients" = "Ingredients";
+"instructions" = "Instructions";
+"tags" = "Tags";
+"preparation" = "Prep";
+"cooking" = "Cook";
+"servings" = "Serves";
+"mins" = "mins";
+"recipe_content" = "Recipe";
+"meal_categories" = "Meal Categories";
+"ingredient_categories" = "Ingredient Categories";
+
 // Settings
 "settings" = "Settings";
 "language" = "Language";

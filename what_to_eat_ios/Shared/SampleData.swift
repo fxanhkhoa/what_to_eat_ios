@@ -67,8 +67,8 @@ struct SampleData {
                 MultiLanguage(lang: "vi", data: "Món phở bò truyền thống với nước dùng thơm ngon")
             ],
             content: [
-                MultiLanguage(lang: "en", data: "Pho is Vietnam's national dish featuring rice noodles in a flavorful broth with thinly sliced beef."),
-                MultiLanguage(lang: "vi", data: "Phở là món ăn quốc dân của Việt Nam với bánh phở trong nước dùng thơm ngon và thịt bò thái mỏng.")
+                MultiLanguage(lang: "en", data: "<p>Pho is Vietnam's national dish featuring rice noodles in a flavorful broth with thinly sliced beef.</p> <img src=\"https://images.unsplash.com/photo-1754829953816-6e506536e7cb?q=80&w=1839&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D\" />"),
+                MultiLanguage(lang: "vi", data: "<p>Phở là món ăn quốc dân của Việt Nam với bánh phở trong nước dùng thơm ngon và thịt bò thái mỏng.</p> <img src=\"https://images.unsplash.com/photo-1754829953816-6e506536e7cb?q=80&w=1839&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D\" />")
             ],
             tags: ["soup", "vietnamese", "noodles"],
             preparationTime: 30,

@@ -50,139 +50,142 @@ struct DishCardFancy: View {
     }
     
     var body: some View {
-        ZStack {
-            // Random background image
-            Image(getRandomBackgroundImage())
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .opacity(0.25)
-                .frame(height: 120)
-        
-            // Main content with neumorphic effect
-            HStack(spacing: 16) {
-                ZStack {
-                    KFImage(URL(string: dish.thumbnail ?? ""))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 150, height: 150) // Increased size
-                        .cornerRadius(.infinity)
-                        .shadow(color: colorScheme == .dark ? Color.black.opacity(0.5) : Color.gray.opacity(0.2), radius: 4, x: 2, y: 2)
-                        .offset(x: -20, y: 0) // Offset to left
-                }
-                .frame(width: 120, height: 120)
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(slicedTitle())
-                        .overlay {
-                            LinearGradient(
-                                gradient: Gradient(colors: [Color(hex: "#F3A446"), Color(hex: "#A06235")]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                            .mask(
-                                Text(slicedTitle())
-                            )
-                        }
-                        .fontWeight(.bold)
-                        .font(.headline)
+        NavigationLink(destination: DishDetailView(dish: dish)) {
+            ZStack {
+                // Random background image
+                Image(getRandomBackgroundImage())
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .opacity(0.25)
+                    .frame(height: 120)
+            
+                // Main content with neumorphic effect
+                HStack(spacing: 16) {
+                    ZStack {
+                        KFImage(URL(string: dish.thumbnail ?? ""))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 150, height: 150) // Increased size
+                            .cornerRadius(.infinity)
+                            .shadow(color: colorScheme == .dark ? Color.black.opacity(0.5) : Color.gray.opacity(0.2), radius: 4, x: 2, y: 2)
+                            .offset(x: -20, y: 0) // Offset to left
+                    }
+                    .frame(width: 120, height: 120)
                     
-                    Text(slicedDescription())
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
-                    HStack(){
-                        VStack (alignment: .center) {
-                            HStack{
-                                Image("preparation_time")
-                                    .resizable()
-                                    .frame(width: 14, height: 14)
-                                Text(LocalizationService.shared.localizedString(for: "preparation"))
-                                    .overlay {
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [Color(hex: "#F3A446"), Color(hex: "#A06235")]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                        .mask(
-                                            Text(LocalizationService.shared.localizedString(for: "preparation"))
-                                        )
-                                    }
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(slicedTitle())
+                            .overlay {
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color(hex: "#F3A446"), Color(hex: "#A06235")]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                                .mask(
+                                    Text(slicedTitle())
+                                )
+                            }
+                            .fontWeight(.bold)
+                            .font(.headline)
+                        
+                        Text(slicedDescription())
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        HStack(){
+                            VStack (alignment: .center) {
+                                HStack{
+                                    Image("preparation_time")
+                                        .resizable()
+                                        .frame(width: 14, height: 14)
+                                    Text(LocalizationService.shared.localizedString(for: "preparation"))
+                                        .overlay {
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [Color(hex: "#F3A446"), Color(hex: "#A06235")]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            )
+                                            .mask(
+                                                Text(LocalizationService.shared.localizedString(for: "preparation"))
+                                            )
+                                        }
+                                        .font(.caption)
+                                    
+                                }
+                                Text("\(dish.preparationTime ?? 0) \(LocalizationService.shared.localizedString(for: "mins"))")
                                     .font(.caption)
                                 
                             }
-                            Text("\(dish.preparationTime ?? 0) \(LocalizationService.shared.localizedString(for: "mins"))")
-                                .font(.caption)
-                            
-                        }
-                        Spacer()
-                        VStack (alignment: .center){
-                            HStack{
-                                Image("cooking_time")
-                                    .resizable()
-                                    .frame(width: 14, height: 14)
-                                Text(LocalizationService.shared.localizedString(for: "cooking"))
-                                    .overlay {
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [Color(hex: "#F3A446"), Color(hex: "#A06235")]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                        .mask(
-                                            Text(LocalizationService.shared.localizedString(for: "cooking"))
-                                        )
-                                    }
+                            Spacer()
+                            VStack (alignment: .center){
+                                HStack{
+                                    Image("cooking_time")
+                                        .resizable()
+                                        .frame(width: 14, height: 14)
+                                    Text(LocalizationService.shared.localizedString(for: "cooking"))
+                                        .overlay {
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [Color(hex: "#F3A446"), Color(hex: "#A06235")]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            )
+                                            .mask(
+                                                Text(LocalizationService.shared.localizedString(for: "cooking"))
+                                            )
+                                        }
+                                        .font(.caption)
+                                }
+                                Text("\(dish.cookingTime ?? 0) \(LocalizationService.shared.localizedString(for: "mins"))")
                                     .font(.caption)
                             }
-                            Text("\(dish.cookingTime ?? 0) \(LocalizationService.shared.localizedString(for: "mins"))")
-                                .font(.caption)
-                        }
-                        Spacer()
-                        VStack{
-                            if (dish.difficultLevel == DifficultyLevel.easy.rawValue) {
-                                Image("easy")
-                                    .resizable()
-                                    .frame(width: 14, height: 14)
-                            }
-                            if (dish.difficultLevel == DifficultyLevel.medium.rawValue) {
-                                Image("medium")
-                                    .resizable()
-                                    .frame(width: 14, height: 14)
-                            }
-                            if (dish.difficultLevel == DifficultyLevel.hard.rawValue) {
-                                Image("hard")
-                                    .resizable()
-                                    .frame(width: 14, height: 14)
-                            }
-                            
-                            if (dish.difficultLevel != nil) {
-                                HStack {
-                                    LocalizedText(dish.difficultLevel ?? "")
-                                        .font(.caption)
-                                        .foregroundColor(getDifficultyColor())
-                                        .padding(.horizontal, 8)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 8)
-                                                .fill(colorScheme == .dark ? Color.black.opacity(0.7) : Color.white)
-                                                .shadow(color: colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.2), radius: 1, x: -1, y: -1)
-                                                .shadow(color: colorScheme == .dark ? Color.black.opacity(0.7) : Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
-                                        )
+                            Spacer()
+                            VStack{
+                                if (dish.difficultLevel == DifficultyLevel.easy.rawValue) {
+                                    Image("easy")
+                                        .resizable()
+                                        .frame(width: 14, height: 14)
+                                }
+                                if (dish.difficultLevel == DifficultyLevel.medium.rawValue) {
+                                    Image("medium")
+                                        .resizable()
+                                        .frame(width: 14, height: 14)
+                                }
+                                if (dish.difficultLevel == DifficultyLevel.hard.rawValue) {
+                                    Image("hard")
+                                        .resizable()
+                                        .frame(width: 14, height: 14)
+                                }
+                                
+                                if (dish.difficultLevel != nil) {
+                                    HStack {
+                                        LocalizedText(dish.difficultLevel ?? "")
+                                            .font(.caption)
+                                            .foregroundColor(getDifficultyColor())
+                                            .padding(.horizontal, 8)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(colorScheme == .dark ? Color.black.opacity(0.7) : Color.white)
+                                                    .shadow(color: colorScheme == .dark ? Color.white.opacity(0.1) : Color.black.opacity(0.2), radius: 1, x: -1, y: -1)
+                                                    .shadow(color: colorScheme == .dark ? Color.black.opacity(0.7) : Color.black.opacity(0.1), radius: 1, x: 1, y: 1)
+                                            )
+                                    }
                                 }
                             }
                         }
                     }
+                    .padding(.vertical, 8)
+                    .padding(.trailing, 16)
                 }
-                .padding(.vertical, 8)
-                .padding(.trailing, 16)
             }
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(colorScheme == .dark ? Color(UIColor.systemGray6) : Color.white)
+                    .shadow(color: colorScheme == .dark ? Color.black.opacity(0.6) : Color.gray.opacity(0.3), radius: 8, x: 5, y: 5)
+                    .shadow(color: colorScheme == .dark ? Color.white.opacity(0.1) : Color.white, radius: 8, x: -5, y: -5)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .frame(height: 80)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(colorScheme == .dark ? Color(UIColor.systemGray6) : Color.white)
-                .shadow(color: colorScheme == .dark ? Color.black.opacity(0.6) : Color.gray.opacity(0.3), radius: 8, x: 5, y: 5)
-                .shadow(color: colorScheme == .dark ? Color.white.opacity(0.1) : Color.white, radius: 8, x: -5, y: -5)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .frame(height: 80)
+        .buttonStyle(PlainButtonStyle()) // Removes default button styling to maintain custom appearance
     }
 }
 
