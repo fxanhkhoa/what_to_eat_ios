@@ -48,6 +48,10 @@ struct DishDetailView: View {
                                 contentSection(content)
                             }
                             
+                            // Videos Section
+                            if let videos = dish.videos, !videos.isEmpty {
+                                videosSection(videos)
+                            }
                             // Ingredients Section
                             if !dish.ingredients.isEmpty {
                                 ingredientsSection
@@ -277,6 +281,38 @@ struct DishDetailView: View {
                         )
                 )
         }
+    }
+    
+    private func videosSection(_ videos: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            LocalizedText("videos")
+                .font(.headline)
+                .foregroundColor(.primary)
+            ForEach(videos, id: \.self) { video in
+                if let url = URL(string: video), let videoId = extractYouTubeId(from: video) {
+                    YouTubeWebView(videoID: videoId)
+                        .frame(height: 220)
+                        .cornerRadius(12)
+                        .padding(.bottom, 8)
+                } else {
+                    Link(video, destination: URL(string: video)!)
+                        .foregroundColor(.blue)
+                }
+            }
+        }
+    }
+    
+    private func extractYouTubeId(from url: String) -> String? {
+        // Handles typical YouTube URL formats
+        if let regex = try? NSRegularExpression(pattern: "(?:v=|youtu.be/)([A-Za-z0-9_-]{11})", options: .caseInsensitive) {
+            let range = NSRange(location: 0, length: url.count)
+            if let match = regex.firstMatch(in: url, options: [], range: range), match.numberOfRanges > 1 {
+                if let swiftRange = Range(match.range(at: 1), in: url) {
+                    return String(url[swiftRange])
+                }
+            }
+        }
+        return nil
     }
     
     private var ingredientsSection: some View {
@@ -523,7 +559,7 @@ struct HTMLWebView: UIViewRepresentable {
         }
         </style>
         </head>
-        <body>
+        <body style="margin: 0; padding: 20px;">
         \(htmlContent)
         </body>
         </html>
@@ -657,5 +693,26 @@ struct IngredientPlaceholderRow: View {
             RoundedRectangle(cornerRadius: 8)
                 .fill(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
         )
+    }
+}
+
+struct YouTubeWebView: UIViewRepresentable {
+    let videoID: String
+    
+    func makeUIView(context: Context) -> WKWebView {
+        let webView = WKWebView()
+        webView.scrollView.isScrollEnabled = false
+        webView.isOpaque = false
+        webView.backgroundColor = .clear
+        return webView
+    }
+    
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        let embedHTML = """
+        <html><body style='margin:0;padding:0;'>
+        <iframe width='100%' height='100%' src='https://www.youtube.com/embed/\(videoID)?playsinline=1' frameborder='0' allowfullscreen></iframe>
+        </body></html>
+        """
+        uiView.loadHTMLString(embedHTML, baseURL: nil)
     }
 }

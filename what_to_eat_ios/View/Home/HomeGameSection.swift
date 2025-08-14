@@ -61,6 +61,8 @@ struct GameMenuItemView: View {
 }
 
 struct HomeGameSection: View {
+    @State private var showWheelOfFortune = false
+    
     var gameItems: [GameMenuItem] {
         [
             GameMenuItem(
@@ -68,8 +70,7 @@ struct HomeGameSection: View {
                 description: "wheel_of_fortune_desc",
                 iconName: "wheel_of_fortune_menu",
                 action: {
-                    print("Wheel of Fortune tapped")
-                    // Navigation action can be added here
+                    showWheelOfFortune = true
                 }
             ),
             GameMenuItem(
@@ -109,6 +110,9 @@ struct HomeGameSection: View {
             }
         }
         .padding(.vertical)
+        .fullScreenCover(isPresented: $showWheelOfFortune) {
+            WheelOfFortune()
+        }
     }
 }
 

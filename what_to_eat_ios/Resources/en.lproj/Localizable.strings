@@ -56,6 +56,10 @@
 "play_again" = "Play Again";
 "your_score" = "Your Score: %d";
 "game_section_title" = "Food Games";
+"game_section_subtitle" = "Choose your favorite game to decide what to eat!";
+"featured_games" = "Featured Games";
+"coming_soon" = "Coming Soon";
+"play_now" = "Play Now";
 
 "untitle" = "Untitled";
 "home_banner_title" = "Hungry? Eat What";
@@ -82,3 +86,11 @@
 "message_required" = "Please enter your message";
 "message_sent_success" = "Your message has been sent successfully!";
 "success" = "Success";
+
+//Wheel of Fortune Game
+"wheel_of_fortune" = "Wheel of Fortune";
+"wheel_of_fortune_description" = "Spin the wheel to discover your next meal!";
+"spin_the_wheel" = "Spin the Wheel!";
+"spinning" = "Spinning...";
+"winner_celebration" = "🎉 Winner! 🎉";
+"tap_to_view_details" = "Tap to view details";

@@ -52,6 +52,11 @@
 "play_again" = "Chơi lại";
 "your_score" = "Điểm của bạn: %d";
 "game_section_title" = "Trò chơi";
+"game_section_subtitle" = "Hãy chọn trò chơi yêu thích để quyết định ăn gì!";
+"featured_games" = "Trò chơi nổi bật";
+"coming_soon" = "Sắp ra mắt";
+"play_now" = "Chơi ngay";
+
 
 "untitle" = "Không có tiêu đề";
 "home_banner_title" = "Đói Bụng? Ăn Gì?";
@@ -78,3 +83,11 @@
 "message_required" = "Vui lòng nhập tin nhắn";
 "message_sent_success" = "Tin nhắn của bạn đã được gửi thành công!";
 "success" = "Thành Công";
+
+// Wheel of Fortune Game
+"wheel_of_fortune" = "Vòng Quay May Mắn";
+"wheel_of_fortune_description" = "Quay bánh xe để khám phá bữa ăn tiếp theo của bạn!";
+"spin_the_wheel" = "Quay Bánh Xe!";
+"spinning" = "Đang quay...";
+"winner_celebration" = "🎉 Người chiến thắng! 🎉";
+"tap_to_view_details" = "Nhấn để xem chi tiết";
