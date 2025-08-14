@@ -289,7 +289,7 @@ struct DishDetailView: View {
                 .font(.headline)
                 .foregroundColor(.primary)
             ForEach(videos, id: \.self) { video in
-                if let url = URL(string: video), let videoId = extractYouTubeId(from: video) {
+                if let _ = URL(string: video), let videoId = extractYouTubeId(from: video) {
                     YouTubeWebView(videoID: videoId)
                         .frame(height: 220)
                         .cornerRadius(12)

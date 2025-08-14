@@ -94,3 +94,63 @@
 "spinning" = "Spinning...";
 "winner_celebration" = "🎉 Winner! 🎉";
 "tap_to_view_details" = "Tap to view details";
+
+// Dish Filters
+"Filter Dishes" = "Filter Dishes";
+"Cooking Time" = "Cooking Time";
+"Preparation Time (minutes)" = "Preparation Time (minutes)";
+"Min" = "Min";
+"Max" = "Max";
+"Difficulty Level" = "Difficulty Level";
+"Meal Categories" = "Meal Categories";
+"Ingredient Categories" = "Ingredient Categories";
+"Tags" = "Tags";
+"Add custom tags" = "Add custom tags";
+"Enter tag and press return" = "Enter tag and press return";
+"Add" = "Add";
+"Cancel" = "Cancel";
+"Apply" = "Apply";
+"Clear All Filters" = "Clear All Filters";
+"clear_all" = "Clear All";
+"Enter tag and press return" = "Enter tag and press return";
+"Add" = "Add";
+"dishes" = "Dishes";
+
+/* Difficulty Levels */
+"difficulty_easy" = "Easy";
+"difficulty_medium" = "Medium";
+"difficulty_hard" = "Hard";
+
+/* Meal Categories */
+"category_breakfast" = "Breakfast";
+"category_lunch" = "Lunch";
+"category_brunch" = "Brunch";
+"category_dinner" = "Dinner";
+"category_burger" = "Burger";
+"category_salad" = "Salad";
+"category_soup" = "Soup";
+"category_appetizer" = "Appetizer";
+"category_dessert" = "Dessert";
+"category_hotpot" = "Hotpot";
+"category_north_vn" = "North Vietnam";
+"category_central_vn" = "Central Vietnam";
+"category_south_vn" = "South Vietnam";
+"category_sweet_soup" = "Sweet Soup";
+"category_vitamin" = "Vitamin";
+
+/* Ingredient Categories */
+"ingredient_category_milk_and_dairy" = "Milk and Dairy";
+"ingredient_category_grains" = "Grains";
+"ingredient_category_beverages_nonalcoholic" = "Non-Alcoholic Beverages";
+"ingredient_category_protein_foods" = "Protein Foods";
+"ingredient_category_snacks_and_sweets" = "Snacks and Sweets";
+"ingredient_category_alcoholic_beverages" = "Alcoholic Beverages";
+"ingredient_category_water" = "Water";
+"ingredient_category_fats_and_oils" = "Fats and Oils";
+"ingredient_category_mixed_dishes" = "Mixed Dishes";
+"ingredient_category_fruit" = "Fruit";
+"ingredient_category_condiments_and_sauces" = "Condiments and Sauces";
+"ingredient_category_sugars" = "Sugars";
+"ingredient_category_vegetables" = "Vegetables";
+"ingredient_category_infant_formula_and_baby_food" = "Infant Formula and Baby Food";
+"ingredient_category_other" = "Other";

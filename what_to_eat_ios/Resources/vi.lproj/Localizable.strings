@@ -91,3 +91,63 @@
 "spinning" = "Đang quay...";
 "winner_celebration" = "🎉 Người chiến thắng! 🎉";
 "tap_to_view_details" = "Nhấn để xem chi tiết";
+
+// Dish Filters
+"Filter Dishes" = "Lọc món ăn";
+"Cooking Time" = "Thời gian nấu";
+"Preparation Time (minutes)" = "Thời gian chuẩn bị (phút)";
+"Min" = "Tối thiểu";
+"Max" = "Tối đa";
+"Difficulty Level" = "Độ khó";
+"Meal Categories" = "Loại bữa ăn";
+"Ingredient Categories" = "Loại nguyên liệu";
+"Tags" = "Thẻ";
+"Add custom tags" = "Thêm thẻ tùy chỉnh";
+"Enter tag and press return" = "Nhập thẻ và nhấn enter";
+"Add" = "Thêm";
+"Cancel" = "Hủy";
+"Apply" = "Áp dụng";
+"Clear All Filters" = "Xóa tất cả bộ lọc";
+"clear_all" = "Xóa tất cả";
+"Enter tag and press return" = "Nhập thẻ và nhấn enter";
+"Add" = "Thêm";
+"dishes" = "Món ăn";
+
+/* Difficulty Levels */
+"difficulty_easy" = "Dễ";
+"difficulty_medium" = "Trung bình";
+"difficulty_hard" = "Khó";
+
+/* Meal Categories */
+"category_breakfast" = "Bữa sáng";
+"category_lunch" = "Bữa trưa";
+"category_brunch" = "Bữa brunch";
+"category_dinner" = "Bữa tối";
+"category_burger" = "Bánh burger";
+"category_salad" = "Salad";
+"category_soup" = "Súp";
+"category_appetizer" = "Khai vị";
+"category_dessert" = "Tráng miệng";
+"category_hotpot" = "Lẩu";
+"category_north_vn" = "Miền Bắc";
+"category_central_vn" = "Miền Trung";
+"category_south_vn" = "Miền Nam";
+"category_sweet_soup" = "Chè";
+"category_vitamin" = "Vitamin";
+
+/* Ingredient Categories */
+"ingredient_category_milk_and_dairy" = "Sữa và sản phẩm từ sữa";
+"ingredient_category_grains" = "Ngũ cốc";
+"ingredient_category_beverages_nonalcoholic" = "Đồ uống không cồn";
+"ingredient_category_protein_foods" = "Thực phẩm giàu protein";
+"ingredient_category_snacks_and_sweets" = "Đồ ăn vặt và kẹo";
+"ingredient_category_alcoholic_beverages" = "Đồ uống có cồn";
+"ingredient_category_water" = "Nước";
+"ingredient_category_fats_and_oils" = "Chất béo và dầu";
+"ingredient_category_mixed_dishes" = "Món ăn hỗn hợp";
+"ingredient_category_fruit" = "Trái cây";
+"ingredient_category_condiments_and_sauces" = "Gia vị và nước sốt";
+"ingredient_category_sugars" = "Đường";
+"ingredient_category_vegetables" = "Rau củ";
+"ingredient_category_infant_formula_and_baby_food" = "Sữa công thức và thức ăn trẻ em";
+"ingredient_category_other" = "Khác";

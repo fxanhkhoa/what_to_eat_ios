@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DishView: View {
     var body: some View {
-        Text("Hello, Dish!")
+        DishListView()
     }
 }
 

@@ -10,7 +10,7 @@ import Kingfisher
 
 struct DishCard: View {
     let dish: Dish
-    var preferredLanguage: String = "en" // Default language
+    let preferredLanguage = LocalizationService.shared.currentLanguage.rawValue
     
     var title: String {
         // Find the title in the preferred language or default to the first one
