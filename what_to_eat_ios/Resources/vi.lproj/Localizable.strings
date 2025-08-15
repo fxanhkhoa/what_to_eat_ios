@@ -197,6 +197,51 @@
 "error" = "Lỗi";
 "ok" = "Đồng ý";
 
+// Flipping Card Game
+"flipping_card" = "Lật Thẻ";
+"score" = "Điểm";
+"moves" = "Nước đi";
+"time" = "Thời gian";
+"pairs_matched" = "cặp đã ghép";
+"new_game" = "Ván mới";
+"pause" = "Tạm dừng";
+"resume" = "Tiếp tục";
+"game_completed" = "Hoàn thành trò chơi!";
+"congratulations" = "Chúc mừng! Bạn đã ghép được tất cả các cặp!";
+"final_score" = "Điểm cuối cùng";
+"total_moves" = "Tổng số nước đi";
+"time_taken" = "Thời gian sử dụng";
+"close" = "Đóng";
+"play_again" = "Chơi lại";
+"unknown_dish" = "Món ăn không xác định";
+"loading_dishes" = "Đang tải món ăn...";
+"no_dishes_available" = "Không có món ăn nào";
+"check_connection_try_again" = "Vui lòng kiểm tra kết nối và thử lại";
+
+// Flipping Card Game (Simplified)
+"pick_a_card" = "Chọn một thẻ";
+"tap_card_to_reveal_dish" = "Chạm vào bất kỳ thẻ nào để khám phá món ăn ngẫu nhiên";
+"mystery_dish" = "Món ăn bí ẩn";
+"choose_your_destiny" = "Chọn ngẫu nhiên món ăn...";
+"dish_revealed" = "Món ăn đã được tiết lộ!";
+"your_random_dish_is" = "Món ăn ngẫu nhiên của bạn đã sẵn sàng!";
+"try_again" = "Thử lại";
+
+// Loading Messages
+"loading_games" = "Đang tải trò chơi...";
+"loading_data" = "Đang tải dữ liệu...";
+"connecting" = "Đang kết nối...";
+"searching" = "Đang tìm kiếm...";
+
+// Empty State Messages
+"no_items_found" = "Không tìm thấy mục nào";
+"try_adjusting_search_criteria" = "Hãy thử điều chỉnh tiêu chí tìm kiếm";
+"no_dishes_found" = "Không tìm thấy món ăn";
+"try_adjusting_dish_filters" = "Hãy thử điều chỉnh bộ lọc món ăn";
+"no_games_available" = "Không có trò chơi nào";
+"check_back_later" = "Hãy quay lại sau để có trò chơi mới";
+"connection_error" = "Lỗi kết nối";
+
 // Tabs
 "home_tab" = "Trang chủ";
 "dish_tab" = "Món ăn";

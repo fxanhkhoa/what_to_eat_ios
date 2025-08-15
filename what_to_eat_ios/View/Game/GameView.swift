@@ -11,6 +11,7 @@ struct GameView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var selectedGame: GameMenuItem?
     @State private var showWheelOfFortune = false
+    @State private var showFlippingCard = false
     let localization = LocalizationService.shared
     
     var gameItems: [GameMenuItem] {
@@ -28,8 +29,7 @@ struct GameView: View {
                 description: "flipping_card_desc",
                 iconName: "flipping_card_menu",
                 action: {
-                    print("Flipping Card tapped")
-                    // Navigation to flipping card game
+                    showFlippingCard = true
                 }
             ),
             GameMenuItem(
@@ -80,6 +80,9 @@ struct GameView: View {
         }
         .fullScreenCover(isPresented: $showWheelOfFortune) {
             WheelOfFortune()
+        }
+        .fullScreenCover(isPresented: $showFlippingCard) {
+            FlippingCard()
         }
     }
     

@@ -319,43 +319,6 @@ struct NutritionBadge: View {
     }
 }
 
-// MARK: - Empty State
-struct EmptyStateView: View {
-    let localization: LocalizationService
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "leaf.fill")
-                .font(.system(size: 50))
-                .foregroundColor(.gray)
-            
-            Text(localization.localizedString(for: "no_ingredients_found"))
-                .font(.title2)
-                .fontWeight(.medium)
-            
-            Text(localization.localizedString(for: "try_adjusting_search"))
-                .font(.body)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding()
-    }
-}
-
-// MARK: - Loading View
-struct LoadingView: View {
-    let localization: LocalizationService
-    var body: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .scaleEffect(1.5)
-            
-            Text(localization.localizedString(for: "loading_ingredients"))
-                .font(.body)
-                .foregroundColor(.secondary)
-        }
-    }
-}
-
 #Preview {
     IngredientView()
 }

@@ -95,6 +95,36 @@
 "winner_celebration" = "🎉 Winner! 🎉";
 "tap_to_view_details" = "Tap to view details";
 
+// Flipping Card Game
+"flipping_card" = "Flipping Card";
+"score" = "Score";
+"moves" = "Moves";
+"time" = "Time";
+"pairs_matched" = "pairs matched";
+"new_game" = "New Game";
+"pause" = "Pause";
+"resume" = "Resume";
+"game_completed" = "Game Completed!";
+"congratulations" = "Congratulations! You've matched all pairs!";
+"final_score" = "Final Score";
+"total_moves" = "Total Moves";
+"time_taken" = "Time Taken";
+"close" = "Close";
+"play_again" = "Play Again";
+"unknown_dish" = "Unknown Dish";
+"loading_dishes" = "Loading dishes...";
+"no_dishes_available" = "No dishes available";
+"check_connection_try_again" = "Please check your connection and try again";
+
+// Flipping Card Game (Simplified)
+"pick_a_card" = "Pick a Card";
+"tap_card_to_reveal_dish" = "Tap any card to reveal your random dish";
+"mystery_dish" = "Mystery Dish";
+"choose_your_destiny" = "Choose your culinary destiny...";
+"dish_revealed" = "Dish Revealed!";
+"your_random_dish_is" = "Your random dish is ready!";
+"try_again" = "Try Again";
+
 // Dish Filters
 "Filter Dishes" = "Filter Dishes";
 "Cooking Time" = "Cooking Time";
@@ -200,6 +230,21 @@
 "loading_ingredients" = "Loading ingredients...";
 "error" = "Error";
 "ok" = "OK";
+
+// Loading Messages
+"loading_games" = "Loading games...";
+"loading_data" = "Loading data...";
+"connecting" = "Connecting...";
+"searching" = "Searching...";
+
+// Empty State Messages
+"no_items_found" = "No Items Found";
+"try_adjusting_search_criteria" = "Try adjusting your search criteria";
+"no_dishes_found" = "No Dishes Found";
+"try_adjusting_dish_filters" = "Try adjusting your dish filters";
+"no_games_available" = "No Games Available";
+"check_back_later" = "Check back later for new games";
+"connection_error" = "Connection Error";
 
 // Tab Labels
 "home_tab" = "Home";
