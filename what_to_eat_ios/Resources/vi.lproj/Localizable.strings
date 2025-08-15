@@ -113,6 +113,15 @@
 "Add" = "Thêm";
 "dishes" = "Món ăn";
 
+// Ingredient Filter
+"filter_ingredients" = "Lọc nguyên liệu";
+"select_categories_to_filter_ingredients" = "Chọn loại để lọc nguyên liệu";
+"ingredient_categories" = "Loại nguyên liệu";
+"clear_all" = "Xóa tất cả";
+"apply_filter" = "Áp dụng bộ lọc";
+"categories_selected" = "%d loại đã chọn";
+"reset" = "Đặt lại";
+
 /* Difficulty Levels */
 "difficulty_easy" = "Dễ";
 "difficulty_medium" = "Trung bình";
@@ -151,3 +160,46 @@
 "ingredient_category_vegetables" = "Rau củ";
 "ingredient_category_infant_formula_and_baby_food" = "Sữa công thức và thức ăn trẻ em";
 "ingredient_category_other" = "Khác";
+
+// Ingredient Detail
+"ingredient" = "Nguyên liệu";
+"unknown_ingredient" = "Không rõ nguyên liệu";
+"measure" = "Đơn vị:";
+"weight" = "Khối lượng:";
+"nutrition_information" = "Thông tin dinh dưỡng";
+"calories" = "Calo";
+"protein" = "Protein";
+"carbohydrates" = "Carbohydrate";
+"fat" = "Chất béo";
+"cholesterol" = "Cholesterol";
+"sodium" = "Natri";
+"kcal" = "kcal";
+"g" = "g";
+"mg" = "mg";
+"categories" = "Phân loại";
+"additional_information" = "Thông tin bổ sung";
+"slug" = "Slug";
+"created" = "Ngày tạo";
+"updated" = "Ngày cập nhật";
+"nutrition_per_measure" = "Dinh dưỡng (trên";
+
+/* Ingredient List */
+"ingredients_title" = "Nguyên liệu";
+"search_ingredients" = "Tìm kiếm nguyên liệu...";
+"all" = "Tất cả";
+"unknown" = "Không rõ";
+"cal" = "Calo";
+"protein" = "Protein";
+"carbs" = "Carbs";
+"no_ingredients_found" = "Không tìm thấy nguyên liệu";
+"try_adjusting_search" = "Hãy thử thay đổi từ khóa hoặc bộ lọc";
+"loading_ingredients" = "Đang tải nguyên liệu...";
+"error" = "Lỗi";
+"ok" = "Đồng ý";
+
+// Tabs
+"home_tab" = "Trang chủ";
+"dish_tab" = "Món ăn";
+"ingredient_tab" = "Nguyên liệu";
+"game_tab" = "Trò chơi";
+"setting_tab" = "Cài đặt";

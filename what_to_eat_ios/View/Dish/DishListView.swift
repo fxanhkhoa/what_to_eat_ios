@@ -10,6 +10,7 @@ import Combine
 
 struct DishListView: View {
     @StateObject private var viewModel = DishListViewModel()
+    @Environment(\.colorScheme) var colorScheme
     @State private var showFilters = false
     @State private var searchText = ""
     var localization = LocalizationService.shared
@@ -22,8 +23,15 @@ struct DishListView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color("PrimaryBackground")
-                    .ignoresSafeArea()
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        colorScheme == .dark ? Color(.systemGray6) : Color(.systemBackground),
+                        colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
                     // Search and Filter Header

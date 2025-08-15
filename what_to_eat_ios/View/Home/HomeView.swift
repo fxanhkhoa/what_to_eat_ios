@@ -10,6 +10,7 @@ import Kingfisher
 
 struct HomeView: View {
     @StateObject private var homeViewModel = HomeViewModel()
+    @Environment(\.colorScheme) var colorScheme
     @State private var searchOpened: Bool = false
     @State private var searchText: String = ""
     @Binding var selectedTab: Int
@@ -28,6 +29,16 @@ struct HomeView: View {
     var body: some View {
         NavigationView {
             ZStack {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        colorScheme == .dark ? Color(.systemGray6) : Color(.systemBackground),
+                        colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+                
                 VStack(spacing: 0) {
                     HomeSearchBar(text: $searchText, onSearchChanged: { newText in
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {

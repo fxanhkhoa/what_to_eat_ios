@@ -10,36 +10,37 @@ import SwiftUI
 struct ContentView: View {
     @State private var selectedTab = 0
     @EnvironmentObject private var themeManager: ThemeManager
+    let localization = LocalizationService.shared
     
     var body: some View {
         TabView(selection: $selectedTab) {
             HomeView(selectedTab: $selectedTab)
                 .tabItem {
-                    Label("Home", systemImage: "house")
+                    Label(localization.localizedString(for: "home_tab"), systemImage: "house")
                 }
                 .tag(0)
             
             DishView()
                 .tabItem {
-                    Label("Dish", systemImage: "fork.knife")
+                    Label(localization.localizedString(for: "dish_tab"), systemImage: "fork.knife")
                 }
                 .tag(1)
             
             IngredientView()
                 .tabItem {
-                    Label("Ingredient", systemImage: "carrot")
+                    Label(localization.localizedString(for: "ingredient_tab"), systemImage: "carrot")
                 }
                 .tag(2)
             
             GameView()
                 .tabItem {
-                    Label("Game", systemImage: "gamecontroller")
+                    Label(localization.localizedString(for: "game_tab"), systemImage: "gamecontroller")
                 }
                 .tag(3)
             
             SettingView()
                 .tabItem {
-                    Label("Setting", systemImage: "gear")
+                    Label(localization.localizedString(for: "setting_tab"), systemImage: "gear")
                 }
                 .tag(4)
         }

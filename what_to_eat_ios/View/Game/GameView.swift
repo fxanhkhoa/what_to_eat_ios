@@ -11,6 +11,7 @@ struct GameView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var selectedGame: GameMenuItem?
     @State private var showWheelOfFortune = false
+    let localization = LocalizationService.shared
     
     var gameItems: [GameMenuItem] {
         [
@@ -91,12 +92,12 @@ struct GameView: View {
                 .foregroundColor(Color(hex: "#F3A446"))
                 .padding(.bottom, 8)
             
-            Text(LocalizationService.shared.localizedString(for: "game_section_title"))
+            Text(localization.localizedString(for: "game_section_title"))
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
             
-            Text(LocalizationService.shared.localizedString(for: "game_section_subtitle"))
+            Text(localization.localizedString(for: "game_section_subtitle"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -111,7 +112,7 @@ struct GameView: View {
             GridItem(.flexible(), spacing: 16)
         ], spacing: 20) {
             ForEach(gameItems) { item in
-                GameCardView(item: item)
+                GameCardView(item: item, localization: localization)
             }
         }
     }
@@ -119,7 +120,7 @@ struct GameView: View {
     private var featuredSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text(LocalizationService.shared.localizedString(for: "featured_games"))
+                Text(localization.localizedString(for: "featured_games"))
                     .font(.headline)
                     .foregroundColor(.primary)
                 Spacer()
@@ -134,7 +135,7 @@ struct GameView: View {
                         Image(systemName: "star.fill")
                             .font(.title)
                             .foregroundColor(.yellow)
-                        Text(LocalizationService.shared.localizedString(for: "coming_soon"))
+                        Text(localization.localizedString(for: "coming_soon"))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
@@ -146,6 +147,7 @@ struct GameView: View {
 
 struct GameCardView: View {
     let item: GameMenuItem
+    let localization: LocalizationService
     @Environment(\.colorScheme) var colorScheme
     @State private var isPressed = false
     
@@ -182,13 +184,13 @@ struct GameCardView: View {
                 
                 // Text Content
                 VStack(spacing: 8) {
-                    Text(LocalizationService.shared.localizedString(for: item.title))
+                    Text(localization.localizedString(for: item.title))
                         .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
                         .multilineTextAlignment(.center)
                     
-                    Text(LocalizationService.shared.localizedString(for: item.description))
+                    Text(localization.localizedString(for: item.description))
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -204,7 +206,7 @@ struct GameCardView: View {
                         .font(.title3)
                         .foregroundColor(Color(hex: "#F3A446"))
                     
-                    Text(LocalizationService.shared.localizedString(for: "play_now"))
+                    Text(localization.localizedString(for: "play_now"))
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundColor(Color(hex: "#F3A446"))

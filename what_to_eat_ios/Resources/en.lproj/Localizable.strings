@@ -154,3 +154,56 @@
 "ingredient_category_vegetables" = "Vegetables";
 "ingredient_category_infant_formula_and_baby_food" = "Infant Formula and Baby Food";
 "ingredient_category_other" = "Other";
+
+// Ingredient Filter
+"filter_ingredients" = "Filter Ingredients";
+"select_categories_to_filter_ingredients" = "Select categories to filter ingredients";
+"ingredient_categories" = "Ingredient Categories";
+"clear_all" = "Clear All";
+"apply_filter" = "Apply Filter";
+"categories_selected" = "%d categories selected";
+"reset" = "Reset";
+
+// Ingredient Detail
+"ingredient" = "Ingredient";
+"unknown_ingredient" = "Unknown Ingredient";
+"measure" = "Measure:";
+"weight" = "Weight:";
+"nutrition_information" = "Nutrition Information";
+"calories" = "Calories";
+"protein" = "Protein";
+"carbohydrates" = "Carbohydrates";
+"fat" = "Fat";
+"cholesterol" = "Cholesterol";
+"sodium" = "Sodium";
+"kcal" = "kcal";
+"g" = "g";
+"mg" = "mg";
+"categories" = "Categories";
+"additional_information" = "Additional Information";
+"slug" = "Slug";
+"created" = "Created";
+"updated" = "Updated";
+"nutrition_per_measure" = "Nutrition (per";
+"carbs" = "Carbs";
+
+// Ingredient List
+"ingredients_title" = "Ingredients";
+"search_ingredients" = "Search ingredients...";
+"all" = "All";
+"unknown" = "Unknown";
+"cal" = "Cal";
+"protein" = "Protein";
+"carbs" = "Carbs";
+"no_ingredients_found" = "No Ingredients Found";
+"try_adjusting_search" = "Try adjusting your search or filter criteria";
+"loading_ingredients" = "Loading ingredients...";
+"error" = "Error";
+"ok" = "OK";
+
+// Tab Labels
+"home_tab" = "Home";
+"dish_tab" = "Dish";
+"ingredient_tab" = "Ingredient";
+"game_tab" = "Game";
+"setting_tab" = "Setting";

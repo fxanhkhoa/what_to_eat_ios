@@ -22,14 +22,14 @@ struct Ingredient: Codable, Identifiable {
     let slug: String
     let title: [MultiLanguage<String>]
     let measure: String
-    let calories: Double
-    let carbohydrate: Double
-    let fat: Double
+    let calories: Double?
+    let carbohydrate: Double?
+    let fat: Double?
     let ingredientCategory: [String]
-    let weight: Double
-    let protein: Double
-    let cholesterol: Double
-    let sodium: Double
+    let weight: Double?
+    let protein: Double?
+    let cholesterol: Double?
+    let sodium: Double?
     let images: [String]
     
     enum CodingKeys: String, CodingKey {
