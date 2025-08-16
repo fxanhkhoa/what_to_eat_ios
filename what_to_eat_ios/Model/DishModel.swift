@@ -14,7 +14,7 @@ struct IngredientsInDish: Codable {
     let ingredientId: String
 }
 
-struct Dish: Codable, Identifiable {
+struct Dish: Codable, Identifiable, Equatable {
     // BaseModel properties
     let id: String
     let deleted: Bool
@@ -41,6 +41,11 @@ struct Dish: Codable, Identifiable {
     let ingredients: [IngredientsInDish]
     let relatedDishes: [String?]?
     let labels: [String]?  // Changed to optional array
+    
+    // Equatable conformance - compare by id since it's unique
+    static func == (lhs: Dish, rhs: Dish) -> Bool {
+        return lhs.id == rhs.id
+    }
     
     enum CodingKeys: String, CodingKey {
         case id = "_id"

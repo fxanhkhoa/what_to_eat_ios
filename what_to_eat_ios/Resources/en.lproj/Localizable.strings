@@ -246,6 +246,22 @@
 "check_back_later" = "Check back later for new games";
 "connection_error" = "Connection Error";
 
+// Wheel of Fortune Dish Picker
+"pick_dishes_for_wheel" = "Pick Dishes for Wheel";
+"selected_dishes" = "Selected Dishes";
+"no_dishes_selected" = "No dishes selected yet";
+"dishes_on_wheel" = "Dishes on Wheel";
+"no_dishes_on_wheel" = "No dishes on wheel yet";
+"add_dishes" = "Add Dishes";
+"add_more" = "Add More";
+"done" = "Done";
+
+// Flipping Card Dish Picker
+"pick_dishes_for_cards" = "Pick Dishes for Cards";
+"dishes_in_game" = "Dishes in Game";
+"no_dishes_for_game" = "No Dishes for Game";
+"add_dishes_to_start_playing" = "Add dishes to start playing the card flipping game";
+
 // Tab Labels
 "home_tab" = "Home";
 "dish_tab" = "Dish";

@@ -242,6 +242,22 @@
 "check_back_later" = "Hãy quay lại sau để có trò chơi mới";
 "connection_error" = "Lỗi kết nối";
 
+// Wheel of Fortune Dish Picker
+"pick_dishes_for_wheel" = "Chọn món ăn cho bánh xe";
+"selected_dishes" = "Món ăn đã chọn";
+"no_dishes_selected" = "Chưa chọn món ăn nào";
+"dishes_on_wheel" = "Món ăn trên bánh xe";
+"no_dishes_on_wheel" = "Chưa có món ăn nào trên bánh xe";
+"add_dishes" = "Thêm món ăn";
+"add_more" = "Thêm nữa";
+"done" = "Xong";
+
+// Flipping Card Dish Picker
+"pick_dishes_for_cards" = "Chọn món ăn cho thẻ";
+"dishes_in_game" = "Món ăn trong game";
+"no_dishes_for_game" = "Không có món ăn cho trò chơi";
+"add_dishes_to_start_playing" = "Thêm món ăn để bắt đầu chơi game lật thẻ";
+
 // Tabs
 "home_tab" = "Trang chủ";
 "dish_tab" = "Món ăn";

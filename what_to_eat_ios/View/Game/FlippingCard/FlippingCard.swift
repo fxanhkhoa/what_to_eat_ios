@@ -12,6 +12,7 @@ struct FlippingCard: View {
     @StateObject private var viewModel = FlippingCardViewModel()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
+    @State private var showDishPicker = false // New: Show dish picker
     let localization = LocalizationService.shared
     
     var body: some View {
@@ -31,30 +32,43 @@ struct FlippingCard: View {
                 if viewModel.isLoading {
                     LoadingView.forDishes(localization: localization)
                 } else if viewModel.dishes.isEmpty {
-                    EmptyStateView.forDishes(localization: localization)
+                    EmptyGameStateView(
+                        onAddDishes: { showDishPicker = true },
+                        localization: localization
+                    )
                 } else {
                     ScrollView {
-                        // Header
-                        GameHeaderView(localization: localization)
-                        
-                        // Game board
-                        GameBoardView(
-                            cards: viewModel.cards,
-                            onCardTapped: viewModel.cardTapped,
-                            localization: localization
-                        )
-                        
-                        // Action button
-                        GameActionsView(
-                            gameState: viewModel.gameState,
-                            onNewGame: viewModel.startNewGame,
-                            localization: localization
-                        )
-                        
-                        Spacer()
+                        VStack(spacing: 20) {
+                            // Header
+                            GameHeaderView(localization: localization)
+                            
+                            // Dish management section
+                            DishManagementSection(
+                                dishes: viewModel.dishes,
+                                onAddDishes: { showDishPicker = true },
+                                onRemoveDish: viewModel.removeDishFromGame,
+                                localization: localization
+                            )
+                            
+                            // Game board
+                            GameBoardView(
+                                cards: viewModel.cards,
+                                onCardTapped: viewModel.cardTapped,
+                                localization: localization
+                            )
+                            
+                            // Action button
+                            GameActionsView(
+                                gameState: viewModel.gameState,
+                                onNewGame: viewModel.startNewGame,
+                                localization: localization
+                            )
+                            
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 20)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 20)
                 }
                 
                 // Game completion overlay
@@ -78,16 +92,61 @@ struct FlippingCard: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: viewModel.startNewGame) {
-                        Image(systemName: "arrow.clockwise")
-                            .foregroundColor(.primary)
+                    Button(action: { showDishPicker = true }) {
+                        Image(systemName: "plus.circle")
+                            .foregroundColor(Color("PrimaryColor"))
                     }
                 }
             }
         }
+        .sheet(isPresented: $showDishPicker) {
+            FlippingCardDishPickerView(selectedDishes: $viewModel.selectedDishes)
+        }
+        .onChange(of: viewModel.selectedDishes) { _, newDishes in
+            viewModel.updateSelectedDishes(newDishes)
+        }
         .onAppear {
             viewModel.loadDishes()
         }
+    }
+}
+
+// MARK: - Empty Game State View
+struct EmptyGameStateView: View {
+    let onAddDishes: () -> Void
+    let localization: LocalizationService
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            Image(systemName: "square.stack.3d.up.badge.a.fill")
+                .font(.system(size: 60))
+                .foregroundColor(Color("PrimaryColor"))
+            
+            Text(localization.localizedString(for: "no_dishes_for_game"))
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
+                .multilineTextAlignment(.center)
+            
+            Text(localization.localizedString(for: "add_dishes_to_start_playing"))
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+            
+            Button(action: onAddDishes) {
+                HStack {
+                    Image(systemName: "plus")
+                    Text(localization.localizedString(for: "add_dishes"))
+                }
+                .padding(.horizontal, 24)
+                .padding(.vertical, 12)
+                .background(Color("PrimaryColor"))
+                .foregroundColor(.white)
+                .cornerRadius(25)
+                .font(.headline)
+            }
+        }
+        .padding(.horizontal, 40)
     }
 }
 
@@ -397,6 +456,73 @@ struct DishRevealView: View {
     private var dishDescription: String? {
         return dish.shortDescription.first(where: { $0.lang == localization.currentLanguage.rawValue })?.data ??
                dish.shortDescription.first?.data
+    }
+}
+
+// MARK: - Dish Management Section
+struct DishManagementSection: View {
+    let dishes: [Dish]
+    let onAddDishes: () -> Void
+    let onRemoveDish: (Dish) -> Void
+    let localization: LocalizationService
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Text(localization.localizedString(for: "dishes_in_game"))
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                
+                Spacer()
+                
+                Text("\(dishes.count)/12")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(dishes.prefix(12)) { dish in
+                        FlippingCardDishChip(
+                            dish: dish,
+                            onRemove: {
+                                onRemoveDish(dish)
+                            }
+                        )
+                    }
+                    
+                    if dishes.count < 12 {
+                        Button(action: onAddDishes) {
+                            VStack {
+                                Image(systemName: "plus.circle.dashed")
+                                    .font(.title2)
+                                    .foregroundColor(Color("PrimaryColor"))
+                                
+                                Text(localization.localizedString(for: "add_more"))
+                                    .font(.caption2)
+                                    .foregroundColor(Color("PrimaryColor"))
+                            }
+                            .frame(width: 80, height: 80)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color("PrimaryColor").opacity(0.1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(Color("PrimaryColor"), style: StrokeStyle(lineWidth: 2, dash: [4]))
+                                    )
+                            )
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(radius: 2)
+        )
     }
 }
 

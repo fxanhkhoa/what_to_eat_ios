@@ -10,16 +10,19 @@ import Combine
 
 struct WheelOfFortune: View {
     @State private var dishes: [Dish] = []
+    @State private var selectedDishes: [Dish] = [] // New: User-selected dishes
     @State private var rotationAngle: Double = 0
     @State private var isSpinning = false
     @State private var selectedDish: Dish?
     @State private var previewDish: Dish?
     @State private var showResult = false
+    @State private var showDishPicker = false // New: Show dish picker
     @State private var cancellables = Set<AnyCancellable>()
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
     private let dishService = DishService()
     @State private var isLoading = true
+    let localization = LocalizationService.shared
     
     var body: some View {
         NavigationView {
@@ -39,6 +42,9 @@ struct WheelOfFortune: View {
                     VStack(spacing: 30) {
                         // Header
                         headerSection
+                        
+                        // Dish management section
+                        dishManagementSection
                         
                         if isLoading {
                             ProgressView()
@@ -77,6 +83,14 @@ struct WheelOfFortune: View {
                             .foregroundColor(.primary)
                     }
                 }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { showDishPicker = true }) {
+                        Image(systemName: "plus.circle")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(Color("PrimaryColor"))
+                    }
+                }
             }
             .onAppear {
                 loadDishes()
@@ -91,6 +105,12 @@ struct WheelOfFortune: View {
                 DishDetailView(dish: selectedDish)
             }
         }
+        .sheet(isPresented: $showDishPicker) {
+            WheelDishPickerView(selectedDishes: $selectedDishes)
+        }
+        .onChange(of: selectedDishes) { _, newDishes in
+            updateWheelDishes(newDishes)
+        }
     }
     
     // MARK: - View Components
@@ -101,16 +121,114 @@ struct WheelOfFortune: View {
                 .font(.system(size: 40))
                 .foregroundColor(Color(hex: "#F3A446"))
             
-            LocalizedText("wheel_of_fortune")
+            Text(localization.localizedString(for: "wheel_of_fortune"))
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
             
-            LocalizedText("wheel_of_fortune_description")
+            Text(localization.localizedString(for: "wheel_of_fortune_description"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
         }
+    }
+    
+    private var dishManagementSection: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Text(localization.localizedString(for: "dishes_on_wheel"))
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                
+                Spacer()
+                
+                Text("\(dishes.count)/7")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            
+            if dishes.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "plus.circle.dashed")
+                        .font(.system(size: 40))
+                        .foregroundColor(.secondary)
+                    
+                    Text(localization.localizedString(for: "no_dishes_on_wheel"))
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                    
+                    Button(action: { showDishPicker = true }) {
+                        HStack {
+                            Image(systemName: "plus")
+                            Text(localization.localizedString(for: "add_dishes"))
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(Color("PrimaryColor"))
+                        .foregroundColor(.white)
+                        .cornerRadius(20)
+                    }
+                }
+                .padding(.vertical, 20)
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(.systemGray6).opacity(0.5))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color(.systemGray4), style: StrokeStyle(lineWidth: 2, dash: [8]))
+                        )
+                )
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(dishes) { dish in
+                            WheelDishChip(
+                                dish: dish,
+                                onRemove: {
+                                    removeDishFromWheel(dish)
+                                },
+                                onTap: {
+                                    previewDish = dish
+                                    showResult = true
+                                }
+                            )
+                        }
+                        
+                        if dishes.count < 7 {
+                            Button(action: { showDishPicker = true }) {
+                                VStack {
+                                    Image(systemName: "plus.circle.dashed")
+                                        .font(.title2)
+                                        .foregroundColor(Color("PrimaryColor"))
+                                    
+                                    Text(localization.localizedString(for: "add_more"))
+                                        .font(.caption2)
+                                        .foregroundColor(Color("PrimaryColor"))
+                                }
+                                .frame(width: 80, height: 80)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color("PrimaryColor").opacity(0.1))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color("PrimaryColor"), style: StrokeStyle(lineWidth: 2, dash: [4]))
+                                        )
+                                )
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                }
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemBackground))
+                .shadow(radius: 2)
+        )
     }
     
     private var wheelContainer: some View {
@@ -317,21 +435,42 @@ struct WheelOfFortune: View {
     // MARK: - Helper Methods
     
     private func loadDishes() {
-        dishService.findRandom(limit: 7)
-            .receive(on: DispatchQueue.main)
-            .sink { completion in
-                isLoading = false
-                
-                if case .failure(let error) = completion {
-                    print("Error loading dishes: \(error)")
-                    // Fall back to sample data on error
-                    dishes = Array(SampleData.sampleDishes.prefix(7))
+        if selectedDishes.isEmpty {
+            // Load random dishes if no dishes are selected
+            dishService.findRandom(limit: 7)
+                .receive(on: DispatchQueue.main)
+                .sink { completion in
+                    isLoading = false
+                    
+                    if case .failure(let error) = completion {
+                        print("Error loading dishes: \(error)")
+                        // Fall back to sample data on error
+                        let fallbackDishes = Array(SampleData.sampleDishes.prefix(7))
+                        dishes = fallbackDishes
+                        selectedDishes = fallbackDishes
+                    }
+                } receiveValue: { receivedDishes in
+                    // If we got empty dishes, fall back to sample data
+                    let loadedDishes = receivedDishes.isEmpty ? Array(SampleData.sampleDishes.prefix(7)) : Array(receivedDishes)
+                    dishes = loadedDishes
+                    selectedDishes = loadedDishes
                 }
-            } receiveValue: { receivedDishes in
-                // If we got empty dishes, fall back to sample data
-                dishes = receivedDishes.isEmpty ? Array(SampleData.sampleDishes.prefix(7)) : Array(receivedDishes)
-            }
-            .store(in: &cancellables)
+                .store(in: &cancellables)
+        } else {
+            // Use selected dishes
+            dishes = selectedDishes
+            isLoading = false
+        }
+    }
+    
+    private func updateWheelDishes(_ newDishes: [Dish]) {
+        dishes = newDishes
+        selectedDish = nil // Reset selected dish when dishes change
+        isSpinning = false // Stop spinning if in progress
+    }
+    
+    private func removeDishFromWheel(_ dish: Dish) {
+        selectedDishes.removeAll { $0.id == dish.id }
     }
     
     private func refreshDishes() async {
@@ -339,21 +478,27 @@ struct WheelOfFortune: View {
         selectedDish = nil
         isSpinning = false
         
-        await withCheckedContinuation { continuation in
-            dishService.findRandom(limit: 7)
-                .receive(on: DispatchQueue.main)
-                .sink { completion in
-                    if case .failure(let error) = completion {
-                        print("Error refreshing dishes: \(error)")
-                        // Fall back to sample data on error
-                        dishes = Array(SampleData.sampleDishes.prefix(7))
+        if selectedDishes.isEmpty {
+            await withCheckedContinuation { continuation in
+                dishService.findRandom(limit: 7)
+                    .receive(on: DispatchQueue.main)
+                    .sink { completion in
+                        if case .failure(let error) = completion {
+                            print("Error refreshing dishes: \(error)")
+                            // Fall back to sample data on error
+                            let fallbackDishes = Array(SampleData.sampleDishes.prefix(7))
+                            dishes = fallbackDishes
+                            selectedDishes = fallbackDishes
+                        }
+                        continuation.resume()
+                    } receiveValue: { receivedDishes in
+                        // If we got empty dishes, fall back to sample data
+                        let loadedDishes = receivedDishes.isEmpty ? Array(SampleData.sampleDishes.prefix(7)) : Array(receivedDishes)
+                        dishes = loadedDishes
+                        selectedDishes = loadedDishes
                     }
-                    continuation.resume()
-                } receiveValue: { receivedDishes in
-                    // If we got empty dishes, fall back to sample data
-                    dishes = receivedDishes.isEmpty ? Array(SampleData.sampleDishes.prefix(7)) : Array(receivedDishes)
-                }
-                .store(in: &cancellables)
+                    .store(in: &cancellables)
+            }
         }
     }
     

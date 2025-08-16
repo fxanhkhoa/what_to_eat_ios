@@ -21,6 +21,7 @@ struct GameCard: Identifiable, Equatable {
 @MainActor
 class FlippingCardViewModel: ObservableObject {
     @Published var dishes: [Dish] = []
+    @Published var selectedDishes: [Dish] = [] // New: User-selected dishes
     @Published var cards: [GameCard] = []
     @Published var gameState: GameState = .notStarted
     @Published var isLoading = false
@@ -38,26 +39,48 @@ class FlippingCardViewModel: ObservableObject {
     func loadDishes() {
         guard !isLoading else { return }
         
-        isLoading = true
-        
-        dishService.findRandom(limit: numberOfCards)
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    self?.isLoading = false
-                    switch completion {
-                    case .finished:
-                        break
-                    case .failure(let error):
-                        self?.handleError(error)
+        if selectedDishes.isEmpty {
+            // Load random dishes if no dishes are selected
+            isLoading = true
+            
+            dishService.findRandom(limit: numberOfCards)
+                .receive(on: DispatchQueue.main)
+                .sink(
+                    receiveCompletion: { [weak self] completion in
+                        self?.isLoading = false
+                        switch completion {
+                        case .finished:
+                            break
+                        case .failure(let error):
+                            self?.handleError(error)
+                        }
+                    },
+                    receiveValue: { [weak self] dishes in
+                        self?.dishes = dishes
+                        self?.selectedDishes = dishes // Sync with selected dishes
+                        self?.setupGame()
                     }
-                },
-                receiveValue: { [weak self] dishes in
-                    self?.dishes = dishes
-                    self?.setupGame()
-                }
-            )
-            .store(in: &cancellables)
+                )
+                .store(in: &cancellables)
+        } else {
+            // Use selected dishes
+            dishes = selectedDishes
+            setupGame()
+        }
+    }
+    
+    func updateSelectedDishes(_ newDishes: [Dish]) {
+        selectedDishes = newDishes
+        dishes = newDishes
+        resetGame()
+        if !newDishes.isEmpty {
+            setupGame()
+        }
+    }
+    
+    func removeDishFromGame(_ dish: Dish) {
+        selectedDishes.removeAll { $0.id == dish.id }
+        updateSelectedDishes(selectedDishes)
     }
     
     func cardTapped(_ card: GameCard) {
@@ -86,7 +109,11 @@ class FlippingCardViewModel: ObservableObject {
     
     private func setupGame() {
         guard dishes.count >= numberOfCards else {
-            errorMessage = "Not enough dishes to start the game"
+            if dishes.isEmpty {
+                errorMessage = nil // Don't show error for empty selection
+            } else {
+                errorMessage = "Not enough dishes to start the game"
+            }
             return
         }
         
@@ -105,11 +132,6 @@ class FlippingCardViewModel: ObservableObject {
         selectedDish = nil
         gameState = .notStarted
         cards.removeAll()
-        
-        // Reset all cards
-        for index in cards.indices {
-            cards[index].isFlipped = false
-        }
     }
     
     private func handleError(_ error: Error) {
