@@ -264,3 +264,18 @@
 "ingredient_tab" = "Nguyên liệu";
 "game_tab" = "Trò chơi";
 "setting_tab" = "Cài đặt";
+
+// Authentication
+"welcome_back" = "Chào Mừng Trở Lại";
+"login_subtitle" = "Đăng nhập để khám phá những công thức tuyệt vời và lưu yêu thích";
+"sign_in_with_google" = "Tiếp tục với Google";
+"sign_in_with_apple" = "Đăng nhập với Apple";
+"signing_in" = "Đang đăng nhập...";
+"by_continuing_you_agree" = "Bằng cách tiếp tục, bạn đồng ý với";
+"terms_of_service" = "Điều khoản dịch vụ";
+"and" = "và";
+"privacy_policy" = "Chính sách bảo mật";
+"sign_out" = "Đăng xuất";
+"delete_account" = "Xóa tài khoản";
+"account" = "Tài khoản";
+"profile" = "Hồ sơ";

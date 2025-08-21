@@ -63,6 +63,7 @@ struct GameMenuItemView: View {
 struct HomeGameSection: View {
     @State private var showWheelOfFortune = false
     @State private var showFlippingCard = false
+    @State private var showVoteGameList = false
     
     var gameItems: [GameMenuItem] {
         [
@@ -87,8 +88,7 @@ struct HomeGameSection: View {
                 description: "vote_game_desc",
                 iconName: "vote_menu",
                 action: {
-                    print("Vote Game tapped")
-                    // Navigation action can be added here
+                    showVoteGameList = true
                 }
             )
         ]
@@ -112,10 +112,13 @@ struct HomeGameSection: View {
         .padding(.vertical)
         .fullScreenCover(isPresented: $showWheelOfFortune) {
             WheelOfFortune()
-        }.fullScreenCover(isPresented: $showFlippingCard) {
+        }
+        .fullScreenCover(isPresented: $showFlippingCard) {
             FlippingCard()
         }
-        
+        .fullScreenCover(isPresented: $showVoteGameList) {
+            VoteGameListView()
+        }
     }
 }
 

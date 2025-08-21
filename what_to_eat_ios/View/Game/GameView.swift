@@ -12,6 +12,7 @@ struct GameView: View {
     @State private var selectedGame: GameMenuItem?
     @State private var showWheelOfFortune = false
     @State private var showFlippingCard = false
+    @State private var showVoteGame = false
     let localization = LocalizationService.shared
     
     var gameItems: [GameMenuItem] {
@@ -37,8 +38,7 @@ struct GameView: View {
                 description: "vote_game_desc",
                 iconName: "vote_menu",
                 action: {
-                    print("Vote Game tapped")
-                    // Navigation to vote game
+                    showVoteGame = true
                 }
             )
         ]
@@ -83,6 +83,9 @@ struct GameView: View {
         }
         .fullScreenCover(isPresented: $showFlippingCard) {
             FlippingCard()
+        }
+        .fullScreenCover(isPresented: $showVoteGame) {
+            VoteGameListView()
         }
     }
     

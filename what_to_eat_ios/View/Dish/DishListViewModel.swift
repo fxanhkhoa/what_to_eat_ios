@@ -92,13 +92,11 @@ class DishListViewModel: ObservableObject {
         return chips
     }
     
-    func loadDishes() {
+    func loadDishes(query: QueryDishDto) {
         guard !isLoading else { return }
         
         isLoading = true
         currentPage = 1
-        
-        let query = createQueryDto()
         
         dishService.findAll(query: query)
             .receive(on: DispatchQueue.main)
@@ -168,7 +166,8 @@ class DishListViewModel: ObservableObject {
     func applyFilters() {
         currentPage = 1
         hasMorePages = true
-        loadDishes()
+        let query = createQueryDto()
+        loadDishes(query: query)
     }
     
     func clearAllFilters() {
@@ -184,7 +183,7 @@ class DishListViewModel: ObservableObject {
         }
     }
     
-    private func createQueryDto(page: Int? = nil) -> QueryDishDto {
+    func createQueryDto(page: Int? = nil) -> QueryDishDto {
         return QueryDishDto(
             page: page ?? currentPage,
             limit: pageSize,

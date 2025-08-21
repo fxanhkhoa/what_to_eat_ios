@@ -56,7 +56,8 @@ struct WheelDishPickerView: View {
                 }
             }
             .onAppear {
-                viewModel.loadDishes()
+                let query = viewModel.createQueryDto()
+                viewModel.loadDishes(query: query)
             }
             .onChange(of: searchText) { _, newValue in
                 viewModel.updateSearchKeyword(newValue)

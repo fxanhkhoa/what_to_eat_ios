@@ -268,3 +268,42 @@
 "ingredient_tab" = "Ingredient";
 "game_tab" = "Game";
 "setting_tab" = "Setting";
+
+// Authentication
+"welcome_back" = "Welcome Back";
+"sign_in_subtitle" = "Choose your preferred sign-in method";
+"sign_in_google" = "Continue with Google";
+"sign_in_apple" = "Continue with Apple";
+"signing_in" = "Signing in...";
+"sign_out" = "Sign Out";
+"profile" = "Profile";
+"login" = "Login";
+
+// Voting Game
+"voting_game" = "Voting Game";
+"create_vote" = "Create Vote";
+"vote_title" = "Vote Title";
+"vote_description" = "Vote Description";
+"add_dishes" = "Add Dishes";
+"search_and_add" = "Search & Add Dishes";
+"add_custom_dish" = "Add Custom Dish";
+"custom_dish_title" = "Custom Dish Title";
+"custom_dish_url" = "Custom Dish URL (optional)";
+"dish_added" = "Dish Added";
+"remove_dish" = "Remove Dish";
+"create_voting_session" = "Create Voting Session";
+"selected_dishes" = "Selected Dishes";
+"no_dishes_selected" = "No dishes selected yet";
+"add_dish_prompt" = "Search for dishes or add custom ones to create your voting session";
+"vote_created_successfully" = "Vote created successfully!";
+"minimum_dishes_required" = "Please add at least 2 dishes to create a vote";
+"enter_vote_title" = "Please enter a vote title";
+"dish_already_added" = "This dish is already added";
+"custom_dish" = "Custom Dish";
+"from_database" = "From Database";
+"add_more_dishes" = "Add More Dishes";
+"done" = "Done";
+"save" = "Save";
+"clear_all" = "Clear All";
+"confirm_clear" = "Are you sure you want to clear all selected dishes?";
+"clear" = "Clear";

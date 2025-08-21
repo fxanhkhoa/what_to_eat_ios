@@ -100,7 +100,8 @@ struct HomeView: View {
                     .padding(20)
                 }
             }
-            .navigationTitle(LocalizationService.shared.localizedString(for: "home_title"))
+            .navigationTitle(LocalizedStringKey("home_tab"))
+            .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 if homeViewModel.featuredDishes.isEmpty {
                     homeViewModel.loadRandomDishes(limit: 10)

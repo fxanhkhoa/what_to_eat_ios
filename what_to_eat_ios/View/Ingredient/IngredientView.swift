@@ -30,13 +30,8 @@ struct IngredientView: View {
                 .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    
-                    // Search Bar
-                    SearchBar(text: $searchText, onSearchButtonClicked: {
-                        viewModel.searchIngredients(keyword: searchText)
-                    }, localization: localization)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
+                    // Search and Filter Header
+                    searchAndFilterHeader
                     
                     // Category Filter
                     CategoryFilterView(selectedCategory: $selectedCategory, onCategoryChanged: { category in
@@ -65,16 +60,7 @@ struct IngredientView: View {
                     }
                 }
                 .navigationTitle(localization.localizedString(for: "ingredients_title"))
-                .navigationBarTitleDisplayMode(.large)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            showingFilter.toggle()
-                        }) {
-                            Image(systemName: "line.3.horizontal.decrease.circle")
-                        }
-                    }
-                }
+                .navigationBarTitleDisplayMode(.inline)
                 .sheet(isPresented: $showingFilter) {
                     IngredientFilterView(
                         selectedCategories: viewModel.selectedCategories,
@@ -97,6 +83,23 @@ struct IngredientView: View {
                 }
             }
         }
+    }
+    
+    private var searchAndFilterHeader: some View {
+        HStack {
+            SearchBar(text: $searchText, onSearchButtonClicked: {
+                viewModel.searchIngredients(keyword: searchText)
+            }, localization: localization)
+            .frame(maxWidth: .infinity)
+            
+            Button(action: { showingFilter.toggle() }) {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+                    .font(.title2)
+            }
+            .padding(.leading, 8)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
     }
 }
 

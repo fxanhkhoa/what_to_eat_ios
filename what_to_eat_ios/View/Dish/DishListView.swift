@@ -47,15 +47,7 @@ struct DishListView: View {
                 }
             }
             .navigationTitle(localization.localizedString(for: "dishes"))
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showFilters = true }) {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
-                            .font(.title2)
-                    }
-                }
-            }
+            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showFilters) {
                 DishFilterView(
                     filters: $viewModel.filters,
@@ -63,7 +55,8 @@ struct DishListView: View {
                 )
             }
             .onAppear {
-                viewModel.loadDishes()
+                let query = viewModel.createQueryDto()
+                viewModel.loadDishes(query: query)
             }
             .onChange(of: searchText) {
                 viewModel.updateSearchKeyword(searchText)
@@ -72,7 +65,7 @@ struct DishListView: View {
     }
     
     private var searchAndFilterHeader: some View {
-        VStack(spacing: 12) {
+        HStack {
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.secondary)
@@ -91,6 +84,13 @@ struct DishListView: View {
             .padding(.vertical, 12)
             .background(Color(.systemGray6))
             .cornerRadius(12)
+            .frame(maxWidth: .infinity)
+            
+            Button(action: { showFilters = true }) {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+                    .font(.title2)
+            }
+            .padding(.leading, 8)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)

@@ -1,0 +1,414 @@
+//
+//  VoteGameFilterView.swift
+//  what_to_eat_ios
+//
+//  Created by Khoa Bui on 20/8/25.
+//
+
+import SwiftUI
+
+struct VoteGameFilterView: View {
+    @ObservedObject var viewModel: VoteGameListViewModel
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    
+    @State private var selectedSortBy: String
+    @State private var selectedSortOrder: String
+    
+    init(viewModel: VoteGameListViewModel) {
+        self.viewModel = viewModel
+        self._selectedSortBy = State(initialValue: viewModel.sortBy)
+        self._selectedSortOrder = State(initialValue: viewModel.sortOrder)
+    }
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                // Header
+                headerSection
+                
+                // Filter Content
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // Sort Section
+                        sortSection
+                        
+                        // Quick Actions
+                        quickActionsSection
+                    }
+                    .padding()
+                }
+                
+                Spacer()
+                
+                // Bottom Action Bar
+                bottomActionBar
+            }
+            .navigationTitle("Filter Vote Games")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("cancel") {
+                        dismiss()
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("reset") {
+                        resetFilters()
+                    }
+                    .disabled(!viewModel.hasActiveFilters)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Header Section
+    private var headerSection: some View {
+        VStack(spacing: 8) {
+            HStack {
+                Image(systemName: "line.3.horizontal.decrease.circle")
+                    .font(.title2)
+                    .foregroundColor(Color("PrimaryColor"))
+                
+                Text("Filter & Sort")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+            }
+            
+            Text("Customize how vote games are displayed and sorted")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color("PrimaryColor").opacity(0.1))
+        )
+        .padding(.horizontal)
+    }
+    
+    // MARK: - Sort Section
+    private var sortSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Sort Options")
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            // Sort By
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Sort By")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+                
+                VStack(spacing: 8) {
+                    SortOptionRow(
+                        title: "Creation Date",
+                        subtitle: "When the vote was created",
+                        value: "createdAt",
+                        selectedValue: $selectedSortBy
+                    )
+                    
+                    SortOptionRow(
+                        title: "Title",
+                        subtitle: "Alphabetical by vote title",
+                        value: "title",
+                        selectedValue: $selectedSortBy
+                    )
+                    
+                    SortOptionRow(
+                        title: "Vote Count",
+                        subtitle: "Number of votes received",
+                        value: "voteCount",
+                        selectedValue: $selectedSortBy
+                    )
+                    
+                    SortOptionRow(
+                        title: "Dish Count",
+                        subtitle: "Number of dishes in the vote",
+                        value: "dishCount",
+                        selectedValue: $selectedSortBy
+                    )
+                }
+            }
+            
+            // Sort Order
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Sort Order")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+                
+                HStack(spacing: 12) {
+                    SortOrderButton(
+                        title: "Newest First",
+                        icon: "arrow.down",
+                        value: "desc",
+                        selectedValue: $selectedSortOrder
+                    )
+                    
+                    SortOrderButton(
+                        title: "Oldest First",
+                        icon: "arrow.up",
+                        value: "asc",
+                        selectedValue: $selectedSortOrder
+                    )
+                }
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(colorScheme == .dark ? Color(.systemGray6) : Color.white)
+                .shadow(radius: 2)
+        )
+    }
+    
+    // MARK: - Quick Actions Section
+    private var quickActionsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Quick Filters")
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            VStack(spacing: 12) {
+                QuickFilterButton(
+                    title: "Most Popular",
+                    subtitle: "Sort by vote count (highest first)",
+                    icon: "hand.raised.fill",
+                    action: {
+                        selectedSortBy = "voteCount"
+                        selectedSortOrder = "desc"
+                    }
+                )
+                
+                QuickFilterButton(
+                    title: "Recently Created",
+                    subtitle: "Show newest vote games first",
+                    icon: "clock.fill",
+                    action: {
+                        selectedSortBy = "createdAt"
+                        selectedSortOrder = "desc"
+                    }
+                )
+                
+                QuickFilterButton(
+                    title: "Most Dishes",
+                    subtitle: "Votes with the most dish options",
+                    icon: "fork.knife",
+                    action: {
+                        selectedSortBy = "dishCount"
+                        selectedSortOrder = "desc"
+                    }
+                )
+                
+                QuickFilterButton(
+                    title: "Alphabetical",
+                    subtitle: "Sort by title A to Z",
+                    icon: "textformat.abc",
+                    action: {
+                        selectedSortBy = "title"
+                        selectedSortOrder = "asc"
+                    }
+                )
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(colorScheme == .dark ? Color(.systemGray6) : Color.white)
+                .shadow(radius: 2)
+        )
+    }
+    
+    // MARK: - Bottom Action Bar
+    private var bottomActionBar: some View {
+        VStack(spacing: 0) {
+            Divider()
+            
+            HStack {
+                Button(action: {
+                    resetFilters()
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.counterclockwise")
+                        Text("Reset")
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.gray.opacity(0.1))
+                    )
+                }
+                .disabled(!viewModel.hasActiveFilters)
+                
+                Spacer()
+                
+                Button(action: {
+                    applyFilters()
+                }) {
+                    HStack {
+                        Image(systemName: "checkmark")
+                        Text("Apply Filters")
+                            .fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color("PrimaryColor"))
+                    )
+                }
+            }
+            .padding()
+        }
+        .background(colorScheme == .dark ? Color(.systemBackground) : Color(.systemBackground))
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func resetFilters() {
+        selectedSortBy = "createdAt"
+        selectedSortOrder = "desc"
+    }
+    
+    private func applyFilters() {
+        viewModel.applySorting(sortBy: selectedSortBy, sortOrder: selectedSortOrder)
+        dismiss()
+    }
+}
+
+// MARK: - Sort Option Row
+struct SortOptionRow: View {
+    let title: String
+    let subtitle: String
+    let value: String
+    @Binding var selectedValue: String
+    
+    var body: some View {
+        Button(action: {
+            selectedValue = value
+        }) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.primary)
+                    
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                if selectedValue == value {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(Color("PrimaryColor"))
+                } else {
+                    Image(systemName: "circle")
+                        .foregroundColor(.gray)
+                }
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(selectedValue == value ? Color("PrimaryColor").opacity(0.1) : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(selectedValue == value ? Color("PrimaryColor") : Color.gray.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - Sort Order Button
+struct SortOrderButton: View {
+    let title: String
+    let icon: String
+    let value: String
+    @Binding var selectedValue: String
+    
+    var body: some View {
+        Button(action: {
+            selectedValue = value
+        }) {
+            HStack {
+                Image(systemName: icon)
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+            }
+            .foregroundColor(selectedValue == value ? .white : Color("PrimaryColor"))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(selectedValue == value ? Color("PrimaryColor") : Color("PrimaryColor").opacity(0.1))
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+// MARK: - Quick Filter Button
+struct QuickFilterButton: View {
+    let title: String
+    let subtitle: String
+    let icon: String
+    let action: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundColor(Color("PrimaryColor"))
+                    .frame(width: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.primary)
+                    
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+#Preview {
+    VoteGameFilterView(viewModel: VoteGameListViewModel())
+}
