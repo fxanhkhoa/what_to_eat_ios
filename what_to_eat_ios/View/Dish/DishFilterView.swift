@@ -66,8 +66,7 @@ struct DishFilterView: View {
                     }
                     .fontWeight(.semibold)
                 }
-            }
-            .toolbar {
+                
                 ToolbarItem(placement: .bottomBar) {
                     Button(localization.localizedString(for: "Clear All Filters")) {
                         tempFilters = DishFilters()

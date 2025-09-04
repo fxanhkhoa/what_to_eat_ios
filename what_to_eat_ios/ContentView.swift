@@ -56,7 +56,7 @@ struct ContentView: View {
                     Button(action: {
                         showProfile = true
                     }) {
-                        if let user = authViewModel.currentUser, let urlString = user.profileImageURL, let url = URL(string: urlString) {
+                        if let user = self.authViewModel.currentUser, let urlString = user.avatar, let url = URL(string: urlString) {
                             AsyncImage(url: url) { image in
                                 image.resizable()
                             } placeholder: {
@@ -73,7 +73,7 @@ struct ContentView: View {
                                 .foregroundColor(.gray)
                         }
                     }
-                    .id(authViewModel.currentUser?.id) // Force toolbar update when user changes
+                    .id(authViewModel.currentUser?.id)
                     .accessibilityLabel(authViewModel.isAuthenticated ? "Profile" : "Login")
                 }
             }
@@ -83,7 +83,7 @@ struct ContentView: View {
                     // Replace with your profile/account view
                     VStack {
                         if let user = authViewModel.currentUser {
-                            if let urlString = user.profileImageURL, let url = URL(string: urlString) {
+                            if let urlString = user.avatar, let url = URL(string: urlString) {
                                 AsyncImage(url: url) { image in
                                     image.resizable()
                                 } placeholder: {
@@ -102,7 +102,7 @@ struct ContentView: View {
                             Text(user.name ?? "User")
                                 .font(.title2)
                                 .padding(.top, 8)
-                            Text(user.email ?? "")
+                            Text(user.email)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                             Button(action: {

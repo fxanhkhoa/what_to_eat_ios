@@ -123,4 +123,192 @@ struct SampleData {
             labels: ["fresh", "healthy"]
         )
     ]
+    
+    // Sample DishVote for real-time voting demonstrations
+    static let sampleDishVote = DishVote(
+        id: "vote-game-123",
+        deleted: false,
+        createdAt: "2025-08-24T10:30:00Z",
+        updatedAt: "2025-08-24T14:45:00Z",
+        createdBy: "user-456",
+        updatedBy: "user-456",
+        deletedBy: nil,
+        deletedAt: nil,
+        title: "🍜 Friday Lunch Decision",
+        description: "Help us decide what to order for today's team lunch! We're torn between these amazing Vietnamese dishes. Cast your vote and let's see what the team wants! 🗳️",
+        dishVoteItems: [
+            // Pho Bo - Leading with votes
+            DishVoteItem(
+                slug: "pho-bo",
+                customTitle: nil,
+                voteUser: [
+                    "user-123", "user-456", "user-789", "user-321", 
+                    "user-654", "user-987", "user-147", "user-258"
+                ],
+                voteAnonymous: ["anon-1", "anon-2", "anon-3"],
+                isCustom: false
+            ),
+            
+            // Banh Mi - Second place
+            DishVoteItem(
+                slug: "banh-mi-vietnam",
+                customTitle: nil,
+                voteUser: [
+                    "user-111", "user-222", "user-333", "user-444", "user-555"
+                ],
+                voteAnonymous: ["anon-4", "anon-5"],
+                isCustom: false
+            ),
+            
+            // Goi Cuon - Healthy option
+            DishVoteItem(
+                slug: "goi-cuon",
+                customTitle: nil,
+                voteUser: ["user-777", "user-888", "user-999"],
+                voteAnonymous: ["anon-6"],
+                isCustom: false
+            ),
+            
+            // Custom dish option - Pizza (someone's creative suggestion)
+            DishVoteItem(
+                slug: "custom-pizza",
+                customTitle: "🍕 Margherita Pizza",
+                voteUser: ["user-pizza-lover", "user-666"],
+                voteAnonymous: [],
+                isCustom: true
+            ),
+            
+            // Custom dish option - Sushi
+            DishVoteItem(
+                slug: "custom-sushi",
+                customTitle: "🍣 Salmon Sushi Roll",
+                voteUser: ["user-sushi-fan"],
+                voteAnonymous: ["anon-7"],
+                isCustom: true
+            )
+        ]
+    )
+    
+    // Additional sample vote games for list demonstrations
+    static let sampleDishVotes = [
+        sampleDishVote,
+        
+        // Weekend Dinner Vote
+        DishVote(
+            id: "vote-game-456",
+            deleted: false,
+            createdAt: "2025-08-23T18:00:00Z",
+            updatedAt: "2025-08-23T20:15:00Z",
+            createdBy: "user-123",
+            updatedBy: "user-123",
+            deletedBy: nil,
+            deletedAt: nil,
+            title: "🌙 Saturday Night Feast",
+            description: "Movie night calls for comfort food! What should we order for our cozy evening in?",
+            dishVoteItems: [
+                DishVoteItem(
+                    slug: "pho-bo",
+                    customTitle: nil,
+                    voteUser: ["user-movie1", "user-movie2"],
+                    voteAnonymous: ["anon-movie1"],
+                    isCustom: false
+                ),
+                DishVoteItem(
+                    slug: "custom-burger",
+                    customTitle: "🍔 Classic Cheeseburger",
+                    voteUser: ["user-burger1", "user-burger2", "user-burger3", "user-burger4"],
+                    voteAnonymous: ["anon-burger1", "anon-burger2"],
+                    isCustom: true
+                ),
+                DishVoteItem(
+                    slug: "custom-ramen",
+                    customTitle: "🍜 Spicy Tonkotsu Ramen",
+                    voteUser: ["user-ramen1", "user-ramen2", "user-ramen3"],
+                    voteAnonymous: [],
+                    isCustom: true
+                )
+            ]
+        ),
+        
+        // Birthday Party Food Vote
+        DishVote(
+            id: "vote-game-789",
+            deleted: false,
+            createdAt: "2025-08-22T09:30:00Z",
+            updatedAt: "2025-08-22T16:45:00Z",
+            createdBy: "user-birthday",
+            updatedBy: "user-birthday",
+            deletedBy: nil,
+            deletedAt: nil,
+            title: "🎉 Sarah's Birthday Celebration",
+            description: "It's Sarah's special day! Let's vote on what delicious food to serve at the party. She loves Vietnamese cuisine but is open to other options too! 🎂",
+            dishVoteItems: [
+                DishVoteItem(
+                    slug: "goi-cuon",
+                    customTitle: nil,
+                    voteUser: ["user-party1", "user-party2", "user-party3", "user-party4", "user-party5"],
+                    voteAnonymous: ["anon-party1", "anon-party2"],
+                    isCustom: false
+                ),
+                DishVoteItem(
+                    slug: "banh-mi-vietnam",
+                    customTitle: nil,
+                    voteUser: ["user-party6", "user-party7"],
+                    voteAnonymous: ["anon-party3"],
+                    isCustom: false
+                ),
+                DishVoteItem(
+                    slug: "custom-tacos",
+                    customTitle: "🌮 Fish Tacos Platter",
+                    voteUser: ["user-party8", "user-party9", "user-party10"],
+                    voteAnonymous: [],
+                    isCustom: true
+                ),
+                DishVoteItem(
+                    slug: "custom-pasta",
+                    customTitle: "🍝 Creamy Alfredo Pasta",
+                    voteUser: ["user-party11"],
+                    voteAnonymous: ["anon-party4"],
+                    isCustom: true
+                )
+            ]
+        ),
+        
+        // Quick Breakfast Vote
+        DishVote(
+            id: "vote-game-321",
+            deleted: false,
+            createdAt: "2025-08-24T06:30:00Z",
+            updatedAt: "2025-08-24T07:15:00Z",
+            createdBy: "user-early-bird",
+            updatedBy: "user-early-bird",
+            deletedBy: nil,
+            deletedAt: nil,
+            title: "☀️ Monday Morning Fuel",
+            description: "Early team meeting today! Quick vote on breakfast options for the office. Let's start the week right! ⚡",
+            dishVoteItems: [
+                DishVoteItem(
+                    slug: "banh-mi-vietnam",
+                    customTitle: nil,
+                    voteUser: ["user-morning1", "user-morning2", "user-morning3"],
+                    voteAnonymous: ["anon-morning1"],
+                    isCustom: false
+                ),
+                DishVoteItem(
+                    slug: "custom-croissant",
+                    customTitle: "🥐 Fresh Croissants & Coffee",
+                    voteUser: ["user-morning4", "user-morning5", "user-morning6", "user-morning7"],
+                    voteAnonymous: ["anon-morning2", "anon-morning3"],
+                    isCustom: true
+                ),
+                DishVoteItem(
+                    slug: "custom-smoothie",
+                    customTitle: "🥤 Healthy Smoothie Bowl",
+                    voteUser: ["user-morning8", "user-morning9"],
+                    voteAnonymous: [],
+                    isCustom: true
+                )
+            ]
+        )
+    ]
 }

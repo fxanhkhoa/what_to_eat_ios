@@ -11,11 +11,11 @@ import Combine
 
 class AuthViewModel: ObservableObject {
     @Published var isAuthenticated = false
-    @Published var currentUser: AppUser?
+    @Published var currentUser: UserModel?
     @Published var showingLogin = false
     
     private var cancellables = Set<AnyCancellable>()
-    let authService = AuthService() // Changed from private to public
+    private let authService = AuthService.shared // Changed from private to public
     
     init() {
         // Subscribe to auth service changes
@@ -27,7 +27,7 @@ class AuthViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        authService.$user
+        authService.$profile
             .receive(on: DispatchQueue.main)
             .sink { [weak self] user in
                 self?.currentUser = user

@@ -15,9 +15,7 @@ struct LoginView: View {
     let dismiss: () -> Void
     
     // Use the shared authService from authViewModel instead of creating a new one
-    private var authService: AuthService {
-        authViewModel.authService
-    }
+    private let authService = AuthService.shared
     
     var body: some View {
         GeometryReader { geometry in
@@ -128,7 +126,7 @@ struct LoginView: View {
                         .resizable()
                         .frame(width: 24, height: 24)
                     
-                    LocalizedText("sign_in_with_google")
+                    LocalizedText("sign_in_google")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                 }

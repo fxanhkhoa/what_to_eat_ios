@@ -8,6 +8,8 @@
 import Foundation
 import AuthenticationServices
 import GoogleSignIn
+import Combine
+import OSLog
 
 struct AppUser: Codable {
     let id: String
@@ -18,25 +20,33 @@ struct AppUser: Codable {
 }
 
 class AuthService: ObservableObject {
+    static let shared = AuthService()
+    
     @Published var user: AppUser?
+    @Published var profile: UserModel?
     @Published var isAuthenticated = false
     @Published var isLoading = false
     @Published var errorMessage: String?
     
     private let authManager = AuthenticationManager.shared
+    private let userService = UserService.shared
+    private var cancellables = Set<AnyCancellable>()
+    private let prefix = "auth"
+    private let logger = Logger(subsystem: "io.vn.eatwhat", category: "AuthService")
     
-    init() {
+    private init() {
         loadUser()
-    }
-    
-    // MARK: - Persistence
-    private func saveUser(_ user: AppUser) {
-        if let encoded = try? JSONEncoder().encode(user) {
-            UserDefaults.standard.set(encoded, forKey: "authenticated_user")
-            DispatchQueue.main.async {
-                self.user = user
-                self.isAuthenticated = true
+        // Subscribe to token cleared notifications from AuthenticationManager
+        authManager.tokensClearedPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.clearUser()
             }
+            .store(in: &cancellables)
+            
+        // Fetch user profile if authenticated
+        if isAuthenticated && authManager.isAuthenticated {
+            fetchUserProfile()
         }
     }
     
@@ -46,6 +56,131 @@ class AuthService: ObservableObject {
             DispatchQueue.main.async {
                 self.user = user
                 self.isAuthenticated = true
+                // Fetch profile after loading user if we have a valid token
+                if self.authManager.isAuthenticated {
+                    self.fetchUserProfile()
+                }
+            }
+        }
+    }
+    
+    // MARK: - User Profile Management
+    
+    /// Fetch the current user's profile using the saved token
+    private func fetchUserProfile() {
+        guard authManager.isAuthenticated else {
+            print("No valid token, cannot fetch profile")
+            return
+        }
+        
+        isLoading = true
+        
+        guard let url = URL(string: "\(APIConstants.baseURL)/\(prefix)/profile") else {
+            logger.error("Invalid URL for user profile")
+            DispatchQueue.main.async {
+                self.isLoading = false
+                self.errorMessage = "Invalid URL for user profile"
+            }
+            return
+        }
+        
+        // Custom publisher to log raw data before decoding
+        URLSession.shared.dataTaskPublisher(for: authManager.createAuthenticatedRequest(url: url, method: "GET"))
+            .tryMap { data, response -> Data in
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    print("[DEBUG] Raw profile response: \n\(jsonString)")
+                    do {
+                        let decoder = JSONDecoder()
+                        let _ = try decoder.decode(UserModel.self, from: data)
+                    } catch {
+                        // print(error.localizedDescription) // <- ⚠️ Don't use this!
+
+                        print(String(describing: error)) // <- ✅ Use this for debuging!
+                    }
+                } else {
+                    print("[DEBUG] Could not decode profile response to string.")
+                }
+                return data
+            }
+            .decode(type: UserModel.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    self?.isLoading = false
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        self?.logger.error("Failed to get profile: \(error.localizedDescription)")
+                        if let urlError = error as? URLError, urlError.code == .userAuthenticationRequired {
+                            print("Token expired during profile fetch, signing out user")
+                            self?.signOut()
+                        } else {
+                            self?.errorMessage = "Failed to fetch user profile"
+                        }
+                    }
+                },
+                receiveValue: { [weak self] userProfile in
+                    self?.logger.info("Successfully fetched user profile: \(userProfile.email)")
+                    self?.profile = userProfile
+                    self?.errorMessage = nil
+                }
+            )
+            .store(in: &cancellables)
+    }
+    
+    /// Manually refresh the user profile
+    func refreshUserProfile() {
+        guard let currentUser = user else {
+            print("No current user found, cannot refresh profile")
+            errorMessage = "No user session found"
+            return
+        }
+        
+        guard authManager.isAuthenticated else {
+            print("No valid token, cannot refresh profile")
+            errorMessage = "Authentication required"
+            return
+        }
+        
+        print("Refreshing user profile for ID: \(currentUser.id)")
+        isLoading = true
+        errorMessage = nil
+        
+        userService.refreshUser(id: currentUser.id)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    self?.isLoading = false
+                    if case .failure(let error) = completion {
+                        print("Failed to refresh user profile: \(error.localizedDescription)")
+                        
+                        if let urlError = error as? URLError, urlError.code == .userAuthenticationRequired {
+                            print("Token expired during refresh, signing out user")
+                            self?.signOut()
+                        } else {
+                            self?.errorMessage = "Failed to refresh user profile"
+                        }
+                    }
+                },
+                receiveValue: { [weak self] userProfile in
+                    print("Successfully refreshed user profile: \(userProfile.email)")
+                    self?.profile = userProfile
+                    self?.errorMessage = nil
+                }
+            )
+            .store(in: &cancellables)
+    }
+    
+    // MARK: - Persistence
+    private func saveUser(_ user: AppUser) {
+        if let encoded = try? JSONEncoder().encode(user) {
+            UserDefaults.standard.set(encoded, forKey: "authenticated_user")
+            DispatchQueue.main.async {
+                self.user = user
+                self.isAuthenticated = true
+                // Fetch user profile after saving user and confirming authentication
+                self.fetchUserProfile()
             }
         }
     }
@@ -54,7 +189,9 @@ class AuthService: ObservableObject {
         UserDefaults.standard.removeObject(forKey: "authenticated_user")
         DispatchQueue.main.async {
             self.user = nil
+            self.profile = nil
             self.isAuthenticated = false
+            self.errorMessage = nil
         }
     }
     

@@ -164,7 +164,7 @@ struct DishSearchAndSelectView: View {
     private func loadDishes() {
         let query = QueryDishDto(
             page: 1,
-            limit: 50,
+            limit: 10,
             keyword: nil,
             tags: nil,
             preparationTimeFrom: nil,
@@ -183,7 +183,7 @@ struct DishSearchAndSelectView: View {
     private func searchDishes() {
         let query = QueryDishDto(
             page: 1,
-            limit: 50,
+            limit: 20,
             keyword: searchText.isEmpty ? nil : searchText,
             tags: nil,
             preparationTimeFrom: nil,

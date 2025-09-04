@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E80F0E9A2E5AED65004EEB67 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = E80F0E992E5AED65004EEB67 /* SocketIO */; };
 		E88170362E3FB11F002F0A74 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E88170352E3FB11F002F0A74 /* Kingfisher */; };
 		E8B28D162E5377BA002DB5B9 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = E8B28D152E5377BA002DB5B9 /* GoogleSignIn */; };
 		E8B28D182E5377BA002DB5B9 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E8B28D172E5377BA002DB5B9 /* GoogleSignInSwift */; };
@@ -59,6 +60,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E8B28D182E5377BA002DB5B9 /* GoogleSignInSwift in Frameworks */,
+				E80F0E9A2E5AED65004EEB67 /* SocketIO in Frameworks */,
 				E88170362E3FB11F002F0A74 /* Kingfisher in Frameworks */,
 				E8B28D162E5377BA002DB5B9 /* GoogleSignIn in Frameworks */,
 			);
@@ -132,6 +134,7 @@
 				E88170352E3FB11F002F0A74 /* Kingfisher */,
 				E8B28D152E5377BA002DB5B9 /* GoogleSignIn */,
 				E8B28D172E5377BA002DB5B9 /* GoogleSignInSwift */,
+				E80F0E992E5AED65004EEB67 /* SocketIO */,
 			);
 			productName = "what-to-eat-ios";
 			productReference = E85293BF2E3DE88500F526CD /* what_to_eat_ios.app */;
@@ -219,6 +222,7 @@
 			packageReferences = (
 				E88170332E3FB00A002F0A74 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				E8B28D142E5377BA002DB5B9 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				E80F0D082E5ACDE4004EEB67 /* XCRemoteSwiftPackageReference "socket" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E85293C02E3DE88500F526CD /* Products */;
@@ -593,6 +597,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E80F0D082E5ACDE4004EEB67 /* XCRemoteSwiftPackageReference "socket" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		E88170332E3FB00A002F0A74 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -612,6 +624,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E80F0E992E5AED65004EEB67 /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SocketIO;
+		};
 		E88170352E3FB11F002F0A74 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E88170332E3FB00A002F0A74 /* XCRemoteSwiftPackageReference "Kingfisher" */;

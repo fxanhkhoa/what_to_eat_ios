@@ -110,7 +110,7 @@ class DishListViewModel: ObservableObject {
                 receiveValue: { [weak self] response in
                     self?.dishes = response.data
                     // Check if we got a full page - if less than pageSize, assume no more pages
-                    self?.hasMorePages = response.data.count >= self?.pageSize ?? 20
+                    self?.hasMorePages = response.count >= self?.pageSize ?? 20
                     self?.currentPage = 1
                 }
             )
@@ -138,7 +138,7 @@ class DishListViewModel: ObservableObject {
                     guard let self = self else { return }
                     self.dishes.append(contentsOf: response.data)
                     // Check if we got a full page - if less than pageSize, assume no more pages
-                    self.hasMorePages = response.data.count >= self.pageSize
+                    self.hasMorePages = response.count >= self.pageSize
                     self.currentPage = nextPage
                 }
             )
@@ -156,7 +156,7 @@ class DishListViewModel: ObservableObject {
                 .async()
             
             dishes = response.data
-            hasMorePages = response.data.count >= pageSize
+            hasMorePages = response.count >= pageSize
             currentPage = 1
         } catch {
             errorMessage = error.localizedDescription

@@ -12,15 +12,18 @@ struct Carousel<Content: View>: View {
     let spacing: CGFloat
     let itemWidth: CGFloat
     let height: CGFloat
+    let autoScrollInterval: TimeInterval?
     
     @State private var currentIndex: Int = 0
     @State private var dragOffset: CGFloat = 0
+    @State private var timer: Timer?
     
-    init(_ items: [Content], spacing: CGFloat = 16, itemWidth: CGFloat = 300, height: CGFloat = 200) {
+    init(_ items: [Content], spacing: CGFloat = 16, itemWidth: CGFloat = 300, height: CGFloat = 200, autoScrollInterval: TimeInterval? = nil) {
         self.items = items
         self.spacing = spacing
         self.itemWidth = itemWidth
         self.height = height
+        self.autoScrollInterval = autoScrollInterval
     }
     
     var body: some View {
@@ -40,6 +43,18 @@ struct Carousel<Content: View>: View {
                 .frame(height: height)
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.easeInOut, value: currentIndex)
+                .onAppear {
+                    startAutoScroll()
+                }
+                .onDisappear {
+                    stopAutoScroll()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    startAutoScroll()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
+                    stopAutoScroll()
+                }
                                 
                 // Custom indicators
                 HStack(spacing: 8) {
@@ -53,12 +68,37 @@ struct Carousel<Content: View>: View {
                                 withAnimation {
                                     currentIndex = index
                                 }
+                                // Restart auto-scroll timer when user manually changes slide
+                                restartAutoScroll()
                             }
                     }
                 }
                 .padding(.top, 8)
             }
         }
+    }
+    
+    // MARK: - Auto Scroll Functions
+    private func startAutoScroll() {
+        guard let interval = autoScrollInterval, items.count > 1 else { return }
+        
+        stopAutoScroll() // Stop any existing timer
+        
+        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
+            withAnimation(.easeInOut(duration: 0.5)) {
+                currentIndex = wrappedIndex(currentIndex + 1)
+            }
+        }
+    }
+    
+    private func stopAutoScroll() {
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    private func restartAutoScroll() {
+        stopAutoScroll()
+        startAutoScroll()
     }
     
     // Function to handle wrapping indices for looping behavior

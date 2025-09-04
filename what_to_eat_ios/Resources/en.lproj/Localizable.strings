@@ -307,3 +307,38 @@
 "clear_all" = "Clear All";
 "confirm_clear" = "Are you sure you want to clear all selected dishes?";
 "clear" = "Clear";
+
+// Voting Game List View
+"search_vote_games" = "Search vote games...";
+"no_vote_games_found" = "No Vote Games Found";
+"try_adjusting_search" = "Try adjusting your search or filter criteria";
+"create_first_vote_game" = "Create your first vote game to get started";
+"back" = "Back";
+"active" = "Active";
+"dishes" = "dishes";
+"votes" = "votes";
+"dishes_in_this_vote" = "Dishes in this vote:";
+"view_results" = "View Results";
+"vote_now" = "Vote Now";
+"more" = "more";
+"custom" = "Custom";
+
+// Filter and Sort
+"filter" = "Filter";
+"sort_by" = "Sort by";
+"sort_order" = "Sort Order";
+"creation_date" = "Creation Date";
+"title" = "Title";
+"vote_count" = "Vote Count";
+"dish_count" = "Dish Count";
+"newest_first" = "Newest First";
+"oldest_first" = "Oldest First";
+"ascending" = "Ascending";
+"descending" = "Descending";
+"most_popular" = "Most Popular";
+"recently_created" = "Recently Created";
+"most_dishes" = "Most Dishes";
+"alphabetical" = "Alphabetical";
+"apply_filters" = "Apply Filters";
+"reset_filters" = "Reset Filters";
+"quick_filters" = "Quick Filters";

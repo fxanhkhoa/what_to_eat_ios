@@ -8,7 +8,6 @@
 import SwiftUI
 import Combine
 
-@MainActor
 class VoteGameListViewModel: ObservableObject {
     @Published var voteGames: [DishVote] = []
     @Published var isLoading: Bool = false
@@ -99,7 +98,7 @@ class VoteGameListViewModel: ObservableObject {
                 },
                 receiveValue: { [weak self] response in
                     self?.voteGames.append(contentsOf: response.data)
-                    self?.hasMorePages = response.data.count >= self?.pageSize ?? 20
+                    self?.hasMorePages = response.count >= self?.pageSize ?? 20
                 }
             )
             .store(in: &cancellables)

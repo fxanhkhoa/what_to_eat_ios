@@ -95,10 +95,10 @@ class HomeViewModel: ObservableObject {
                 }
             } receiveValue: { [weak self] response in
                 guard let self = self else { return }
-                self.logger.info("Search returned \(response.data.count) results")
+                self.logger.info("Search returned \(response.count) results")
                 
                 self.featuredDishes = response.data
-                self.recentDishes = Array(response.data.prefix(min(5, response.data.count)))
+                self.recentDishes = Array(response.data.prefix(min(5, response.count)))
             }
             .store(in: &cancellables)
     }

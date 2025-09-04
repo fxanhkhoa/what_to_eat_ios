@@ -16,6 +16,14 @@ class AuthenticationManager: ObservableObject {
     private let logger = Logger(subsystem: "io.vn.eatwhat", category: "AuthenticationManager")
     private let networkMonitor = NetworkMonitor.shared
     
+    // Add a publisher to notify when tokens are cleared
+    private let tokensClearedSubject = PassthroughSubject<Void, Never>()
+    
+    /// Publisher that emits when tokens are cleared
+    var tokensClearedPublisher: AnyPublisher<Void, Never> {
+        tokensClearedSubject.eraseToAnyPublisher()
+    }
+    
     // MARK: - Token Management
     
     /// Current access token
@@ -30,7 +38,11 @@ class AuthenticationManager: ObservableObject {
     
     /// Check if user is authenticated (has valid token)
     var isAuthenticated: Bool {
-        return currentToken != nil
+        guard let token = currentToken else { return false }
+        
+        // Parse JWT and check if it's still valid
+        let parsedToken = parseJWT(for: token)
+        return parsedToken?.isValid == true && parsedToken?.isExpired == false
     }
     
     private init() {}
@@ -49,6 +61,9 @@ class AuthenticationManager: ObservableObject {
         UserDefaults.standard.removeObject(forKey: "auth_token")
         UserDefaults.standard.removeObject(forKey: "refresh_token")
         logger.info("Authentication tokens cleared")
+        
+        // Notify subscribers that tokens were cleared
+        tokensClearedSubject.send()
     }
     
     // MARK: - Request Authentication
@@ -82,6 +97,191 @@ class AuthenticationManager: ObservableObject {
         return Fail(error: URLError(.userAuthenticationRequired)).eraseToAnyPublisher()
     }
     
+    func parseJWT(for token: String) -> JWTToken? {
+        logger.debug("Parsing JWT token")
+        
+        // Split JWT into its three parts: header.payload.signature
+        let segments = token.components(separatedBy: ".")
+        guard segments.count == 3 else {
+            logger.error("Invalid JWT format: expected 3 segments, got \(segments.count)")
+            return nil
+        }
+        
+        let headerSegment = segments[0]
+        let payloadSegment = segments[1]
+        let signatureSegment = segments[2]
+        
+        // Decode header
+        guard let headerData = base64URLDecode(headerSegment),
+              let headerJSON = try? JSONSerialization.jsonObject(with: headerData) as? [String: Any] else {
+            logger.error("Failed to decode JWT header")
+            return nil
+        }
+        
+        // Decode payload (claims)
+        guard let payloadData = base64URLDecode(payloadSegment) else {
+            logger.error("Failed to decode JWT payload")
+            return nil
+        }
+        
+        // Parse claims
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        
+        guard let claims = try? decoder.decode(JWTClaims.self, from: payloadData) else {
+            logger.error("Failed to parse JWT claims")
+            return nil
+        }
+        
+        // Validate token
+        let isValid = validateJWTStructure(header: headerJSON, claims: claims)
+        
+        // Check expiration
+        let (isExpired, expirationDate) = checkTokenExpiration(claims: claims)
+        
+        if isExpired {
+            logger.warning("JWT token has expired")
+        }
+        
+        let jwtToken = JWTToken(
+            header: headerJSON,
+            claims: claims,
+            signature: signatureSegment,
+            isValid: isValid,
+            isExpired: isExpired,
+            expirationDate: expirationDate
+        )
+        
+        logger.info("JWT parsed successfully - Valid: \(isValid), Expired: \(isExpired)")
+        logTokenInfo(token: jwtToken)
+        
+        return jwtToken
+    }
+    
+    // MARK: - JWT Helper Methods
+    
+    /// Decode base64URL encoded string
+    private func base64URLDecode(_ value: String) -> Data? {
+        var base64 = value
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        
+        // Add padding if needed
+        let remainder = base64.count % 4
+        if remainder > 0 {
+            base64 = base64.padding(toLength: base64.count + 4 - remainder,
+                                  withPad: "=",
+                                  startingAt: 0)
+        }
+        
+        return Data(base64Encoded: base64)
+    }
+    
+    /// Validate JWT structure and basic claims
+    private func validateJWTStructure(header: [String: Any], claims: JWTClaims) -> Bool {
+        // Check if header has required algorithm field
+        guard let algorithm = header["alg"] as? String, !algorithm.isEmpty else {
+            logger.error("JWT header missing or invalid algorithm")
+            return false
+        }
+        
+        // Check if token type is JWT
+        if let tokenType = header["typ"] as? String, tokenType.uppercased() != "JWT" {
+            logger.warning("Token type is not JWT: \(tokenType)")
+        }
+        
+        // Validate required claims
+        guard claims.exp != nil else {
+            logger.error("JWT missing expiration time (exp)")
+            return false
+        }
+        
+        // Validate subject or user identifier (using your custom claims)
+        if claims.sub == nil && claims.id == nil {
+            logger.warning("JWT missing subject identifier")
+        }
+        
+        // Validate that we have at least email for user identification
+        if claims.email == nil {
+            logger.warning("JWT missing email claim")
+        }
+        
+        return true
+    }
+    
+    /// Check if token is expired
+    private func checkTokenExpiration(claims: JWTClaims) -> (isExpired: Bool, expirationDate: Date?) {
+        guard let exp = claims.exp else {
+            return (false, nil)
+        }
+        
+        let expirationDate = Date(timeIntervalSince1970: TimeInterval(exp))
+        let isExpired = expirationDate < Date()
+        
+        // Check not before time if present
+        if let nbf = claims.nbf {
+            let notBeforeDate = Date(timeIntervalSince1970: TimeInterval(nbf))
+            if notBeforeDate > Date() {
+                logger.warning("JWT is not yet valid (nbf: \(notBeforeDate))")
+                return (true, expirationDate)
+            }
+        }
+        
+        return (isExpired, expirationDate)
+    }
+    
+    /// Log token information for debugging
+    private func logTokenInfo(token: JWTToken) {
+        logger.debug("JWT Token Info:")
+        logger.debug("- Subject: \(token.claims.sub ?? "N/A")")
+        logger.debug("- User ID: \(token.claims.id ?? "N/A")")
+        logger.debug("- Email: \(token.claims.email ?? "N/A")")
+        logger.debug("- Role Name: \(token.claims.roleName ?? "N/A")")
+        logger.debug("- Name: \(token.claims.name ?? "N/A")")
+        logger.debug("- Google ID: \(token.claims.googleId ?? "N/A")")
+        logger.debug("- Apple ID: \(token.claims.appleId ?? "N/A")")
+        logger.debug("- GitHub ID: \(token.claims.githubId ?? "N/A")")
+        logger.debug("- Issuer: \(token.claims.iss ?? "N/A")")
+        
+        if let exp = token.claims.exp {
+            let expDate = Date(timeIntervalSince1970: TimeInterval(exp))
+            logger.debug("- Expires: \(expDate)")
+        }
+        
+        if let iat = token.claims.iat {
+            let issuedDate = Date(timeIntervalSince1970: TimeInterval(iat))
+            logger.debug("- Issued: \(issuedDate)")
+        }
+    }
+    
+    /// Get user information from current token
+    func getCurrentUserInfo() -> JWTClaims? {
+        guard let token = currentToken else {
+            logger.warning("No current token available")
+            return nil
+        }
+        
+        guard let parsedToken = parseJWT(for: token),
+              parsedToken.isValid && !parsedToken.isExpired else {
+            logger.warning("Current token is invalid or expired")
+            return nil
+        }
+        
+        return parsedToken.claims
+    }
+    
+    /// Check if token will expire within specified time interval
+    func willTokenExpireSoon(within timeInterval: TimeInterval = 300) -> Bool {
+        guard let token = currentToken,
+              let parsedToken = parseJWT(for: token),
+              let expirationDate = parsedToken.expirationDate else {
+            return true // Assume expiry if we can't parse
+        }
+        
+        let warningDate = Date().addingTimeInterval(timeInterval)
+        return expirationDate <= warningDate
+    }
+    
     // MARK: - Token Refresh
     
     /// Refresh authentication token when it expires
@@ -96,7 +296,7 @@ class AuthenticationManager: ObservableObject {
             return Fail(error: URLError(.notConnectedToInternet)).eraseToAnyPublisher()
         }
         
-        guard let url = URL(string: "\(APIConstants.baseURL)/auth/refresh") else {
+        guard let url = URL(string: "\(APIConstants.baseURL)/auth/refresh-token") else {
             logger.error("Invalid URL for token refresh endpoint")
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
@@ -258,11 +458,31 @@ extension AuthenticationManager {
                     
                     if httpResponse.statusCode >= 400 {
                         self.logger.error("Server error: \(httpResponse.statusCode)")
+                        throw URLError(.badServerResponse)
+                    }
+                    
+                    // Handle empty response for successful operations
+                    if data.isEmpty && (200...299).contains(httpResponse.statusCode) {
+                        self.logger.info("Received empty response for successful operation (status: \(httpResponse.statusCode))")
+                        // For empty responses, create a minimal JSON object that can be decoded
+                        // This is a workaround for APIs that don't return data on successful operations
+                        if method == "POST" || method == "PUT" || method == "PATCH" {
+                            self.logger.warning("Empty response detected for \(method) operation - API should return created/updated object")
+                        }
+                        throw URLError(.zeroByteResource) // This will be caught and handled below
                     }
                 }
                 return data
             }
             .decode(type: responseType, decoder: createJSONDecoder())
+            .catch { error -> AnyPublisher<T, Error> in
+                // Handle empty response case
+                if let urlError = error as? URLError, urlError.code == .zeroByteResource {
+                    self.logger.error("API returned empty response - cannot decode \(String(describing: responseType))")
+                    return Fail(error: APIError.emptyResponse).eraseToAnyPublisher()
+                }
+                return Fail(error: error).eraseToAnyPublisher()
+            }
             .eraseToAnyPublisher()
         
         return withAutoTokenRefresh(originalPublisher: publisher)

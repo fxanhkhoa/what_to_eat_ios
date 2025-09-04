@@ -68,6 +68,11 @@ struct VotingGameCreateView: View {
             .sheet(isPresented: $showingCustomDishSheet) {
                 CustomDishAddView(viewModel: viewModel)
             }
+            .onChange(of: viewModel.showSuccess) {
+                if viewModel.showSuccess {
+                    dismiss()
+                }
+            }
         }
     }
     
@@ -208,11 +213,12 @@ struct VotingGameCreateView: View {
                     HStack {
                         Image(systemName: "magnifyingglass")
                         Text("search_and_add")
+                            .multilineTextAlignment(.center)
                     }
                     .font(.subheadline)
                     .foregroundColor(.white)
                     .padding()
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, minHeight: 80)
                     .background(Color("PrimaryColor"))
                     .cornerRadius(10)
                 }
@@ -224,11 +230,12 @@ struct VotingGameCreateView: View {
                     HStack {
                         Image(systemName: "plus.circle")
                         Text("add_custom_dish")
+                            .multilineTextAlignment(.center)
                     }
                     .font(.subheadline)
                     .foregroundColor(Color("PrimaryColor"))
                     .padding()
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, minHeight: 80)
                     .background(Color("PrimaryColor").opacity(0.1))
                     .cornerRadius(10)
                     .overlay(

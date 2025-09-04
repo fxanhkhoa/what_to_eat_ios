@@ -11,7 +11,6 @@ import OSLog
 
 class DishVoteService {
     private let jsonDecoder: JSONDecoder
-    private let jsonEncoder: JSONEncoder
     private let urlSession: URLSession
     private let prefix = "dish-vote"
     private let authManager = AuthenticationManager.shared
@@ -28,10 +27,6 @@ class DishVoteService {
         self.jsonDecoder = JSONDecoder()
         self.jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
         self.jsonDecoder.dateDecodingStrategy = .iso8601
-        
-        self.jsonEncoder = JSONEncoder()
-        self.jsonEncoder.keyEncodingStrategy = .convertToSnakeCase
-        self.jsonEncoder.dateEncodingStrategy = .iso8601
     }
     
     // MARK: - Find All (with filtering and pagination)
@@ -70,7 +65,7 @@ class DishVoteService {
                 self.logger.info("Starting authenticated findAll request")
             },
             receiveOutput: { response in
-                self.logger.info("Received \(response.data.count) dish votes")
+                self.logger.info("Received \(response.count) dish votes")
             },
             receiveCompletion: { completion in
                 if case .failure(let error) = completion {
@@ -139,7 +134,7 @@ class DishVoteService {
         logger.info("Making authenticated create API request to: \(url.absoluteString)")
         
         do {
-            let jsonData = try jsonEncoder.encode(dto)
+            let jsonData = try JSONEncoder().encode(dto)
             
             return authManager.authenticatedRequest(
                 url: url,
@@ -182,7 +177,7 @@ class DishVoteService {
         logger.info("Making authenticated update API request to: \(url.absoluteString)")
         
         do {
-            let jsonData = try jsonEncoder.encode(dto)
+            let jsonData = try JSONEncoder().encode(dto)
             
             return authManager.authenticatedRequest(
                 url: url,

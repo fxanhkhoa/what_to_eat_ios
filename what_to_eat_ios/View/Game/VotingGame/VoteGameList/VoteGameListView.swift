@@ -10,63 +10,180 @@ import Combine
 
 struct VoteGameListView: View {
     @StateObject private var viewModel = VoteGameListViewModel()
+    @EnvironmentObject var authViewModel: AuthViewModel
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
     
     @State private var showingCreateVote = false
     @State private var showingFilterSheet = false
     @State private var searchText = ""
+    @State private var showingLogin = false
+    @State private var hasLoadedAfterLogin = false
     let localization = LocalizationService.shared
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                // Search and Filter Header
-                searchAndFilterHeader
-                
-                // Vote Games List
-                voteGamesList
+            // Show login if not authenticated
+            if !authViewModel.isAuthenticated {
+                loginRequiredView
+            } else {
+                authenticatedContentView
             }
-            .navigationTitle("voting_game")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "chevron.left")
-                            Text("Back")
-                        }
+        }
+        .sheet(isPresented: $showingLogin) {
+            LoginView {
+                showingLogin = false
+            }
+            .environmentObject(authViewModel)
+        }
+        .onAppear {
+            checkAuthenticationAndLoad()
+        }
+        .onChange(of: authViewModel.isAuthenticated) { _, isAuthenticated in
+            if isAuthenticated && !hasLoadedAfterLogin {
+                // User just logged in successfully, reload the vote games
+                Task { @MainActor in
+                    await viewModel.refreshVoteGames()
+                    hasLoadedAfterLogin = true
+                }
+            } else if !isAuthenticated {
+                // User logged out, reset the flag
+                hasLoadedAfterLogin = false
+            }
+        }
+    }
+    
+    // MARK: - Login Required View
+    private var loginRequiredView: some View {
+        VStack(spacing: 24) {
+            Spacer()
+            
+            // Icon
+            Image(systemName: "person.circle.fill")
+                .font(.system(size: 80))
+                .foregroundColor(Color("PrimaryColor"))
+            
+            // Title and Message
+            VStack(spacing: 12) {
+                Text("Login Required")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                
+                Text("Please login to access voting games and participate in community voting.")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
+            
+            // Action Buttons
+            VStack(spacing: 12) {
+                Button(action: {
+                    showingLogin = true
+                }) {
+                    HStack {
+                        Image(systemName: "person.fill")
+                        Text("Login to Continue")
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color("PrimaryColor"))
+                    .cornerRadius(12)
+                }
+                .padding(.horizontal, 32)
+                
+                Button(action: {
+                    dismiss()
+                }) {
+                    Text("Go Back")
+                        .font(.subheadline)
                         .foregroundColor(Color("PrimaryColor"))
-                    }
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        showingCreateVote = true
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(Color("PrimaryColor"))
-                    }
                 }
             }
-            .sheet(isPresented: $showingCreateVote) {
-                VotingGameCreateView()
+            
+            Spacer()
+        }
+        .navigationTitle("Voting Games")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                    .foregroundColor(Color("PrimaryColor"))
+                }
             }
-            .sheet(isPresented: $showingFilterSheet) {
-                VoteGameFilterView(viewModel: viewModel)
+        }
+    }
+    
+    // MARK: - Authenticated Content View
+    private var authenticatedContentView: some View {
+        VStack(spacing: 0) {
+            // Search and Filter Header
+            searchAndFilterHeader
+            
+            // Vote Games List
+            voteGamesList
+        }
+        .navigationTitle("voting_game")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                    .foregroundColor(Color("PrimaryColor"))
+                }
             }
-            .onAppear {
-                viewModel.loadVoteGames()
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    showingCreateVote = true
+                }) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(Color("PrimaryColor"))
+                }
             }
-            .refreshable {
-                await viewModel.refreshVoteGames()
-            }
+        }
+        .sheet(isPresented: $showingCreateVote) {
+            VotingGameCreateView()
+                .environmentObject(authViewModel)
+        }
+        .sheet(isPresented: $showingFilterSheet) {
+            VoteGameFilterView(viewModel: viewModel)
+        }
+        .refreshable {
+            await viewModel.refreshVoteGames()
         }
         .onChange(of: searchText) { _, newValue in
             viewModel.updateSearchKeyword(newValue)
+        }
+        .onChange(of: showingCreateVote) { _, newValue in
+            if !newValue {
+                // Refresh vote games when create vote sheet is dismissed
+                Task { @MainActor in
+                    viewModel.loadVoteGames()
+                }
+            }
+        }
+    }
+    
+    // MARK: - Helper Methods
+    private func checkAuthenticationAndLoad() {
+        if authViewModel.isAuthenticated {
+            viewModel.loadVoteGames()
         }
     }
     
@@ -166,6 +283,8 @@ struct VoteGameListView: View {
 struct VoteGameCard: View {
     let voteGame: DishVote
     @Environment(\.colorScheme) private var colorScheme
+    @State private var showingResults = false
+    @State private var showingVoteGame = false
     
     private var totalVotes: Int {
         voteGame.dishVoteItems.reduce(0) { total, item in
@@ -224,7 +343,7 @@ struct VoteGameCard: View {
                 Spacer()
                 
                 // Created Date
-                Text(formatDate(voteGame.createdAt))
+                Text(DateUtil.formatDate(voteGame.createdAt))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -237,7 +356,7 @@ struct VoteGameCard: View {
             // Action Buttons
             HStack(spacing: 12) {
                 Button(action: {
-                    // View results action
+                    showingResults = true
                 }) {
                     HStack {
                         Image(systemName: "chart.bar.fill")
@@ -254,7 +373,7 @@ struct VoteGameCard: View {
                 Spacer()
                 
                 Button(action: {
-                    // Vote action
+                    showingVoteGame = true
                 }) {
                     HStack {
                         Image(systemName: "hand.raised.fill")
@@ -276,6 +395,12 @@ struct VoteGameCard: View {
                 .fill(colorScheme == .dark ? Color(.systemGray6) : Color.white)
                 .shadow(radius: 2)
         )
+        .sheet(isPresented: $showingResults) {
+            VoteResultsView(dishVote: voteGame)
+        }
+        .sheet(isPresented: $showingVoteGame) {
+            RealTimeVoteGameView(voteGameId: voteGame.id)
+        }
     }
     
     // MARK: - Dish Preview Section
@@ -305,19 +430,6 @@ struct VoteGameCard: View {
                 .padding(.horizontal, 1)
             }
         }
-    }
-    
-    private func formatDate(_ dateString: String) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        
-        if let date = formatter.date(from: dateString) {
-            let displayFormatter = DateFormatter()
-            displayFormatter.dateStyle = .medium
-            return displayFormatter.string(from: date)
-        }
-        
-        return dateString
     }
 }
 

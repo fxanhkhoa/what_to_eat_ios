@@ -268,26 +268,16 @@ struct AdditionalDetailsSection: View {
             VStack(spacing: 8) {
                 DetailRow(title: localization.localizedString(for: "slug"), value: ingredient.slug)
                 if let createdAt = ingredient.createdAt {
-                    DetailRow(title: localization.localizedString(for: "created"), value: formatDate(createdAt))
+                    DetailRow(title: localization.localizedString(for: "created"), value: DateUtil.formatDate(createdAt))
                 }
                 if let updatedAt = ingredient.updatedAt {
-                    DetailRow(title: localization.localizedString(for: "updated"), value: formatDate(updatedAt))
+                    DetailRow(title: localization.localizedString(for: "updated"), value: DateUtil.formatDate(updatedAt))
                 }
             }
         }
         .padding()
         .background(Color(.systemGray6))
         .cornerRadius(12)
-    }
-    
-    private func formatDate(_ dateString: String) -> String {
-        let formatter = ISO8601DateFormatter()
-        guard let date = formatter.date(from: dateString) else { return dateString }
-        
-        let displayFormatter = DateFormatter()
-        displayFormatter.dateStyle = .medium
-        displayFormatter.timeStyle = .short
-        return displayFormatter.string(from: date)
     }
 }
 

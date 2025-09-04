@@ -54,3 +54,43 @@ struct RolePermission: Codable {
         case deleted, createdAt, updatedAt, createdBy, updatedBy, deletedBy, deletedAt
     }
 }
+
+// MARK: - JWT Models
+struct JWTClaims: Codable {
+    // Standard JWT claims
+    let sub: String?        // Subject (user ID)
+    let exp: Int?           // Expiration time
+    let iat: Int?           // Issued at time
+    let nbf: Int?           // Not before time
+    let iss: String?        // Issuer
+    let aud: String?        // Audience
+    
+    // Custom claims specific to your app
+    let id: String?         // User ID
+    let email: String?      // User email
+    let googleId: String?   // Google ID
+    let appleId: String?    // Apple ID
+    let githubId: String?   // GitHub ID
+    let roleName: String?   // User role name
+    let name: String?       // User name
+    
+    enum CodingKeys: String, CodingKey {
+        case sub, exp, iat, nbf, iss, aud
+        case id
+        case email
+        case googleId = "google_id"
+        case appleId = "apple_id"
+        case githubId = "github_id"
+        case roleName = "role_name"
+        case name
+    }
+}
+
+struct JWTToken {
+    let header: [String: Any]
+    let claims: JWTClaims
+    let signature: String
+    let isValid: Bool
+    let isExpired: Bool
+    let expirationDate: Date?
+}

@@ -279,3 +279,77 @@
 "delete_account" = "Xóa tài khoản";
 "account" = "Tài khoản";
 "profile" = "Hồ sơ";
+
+// Voting Game
+"voting_game" = "Trò Chơi Bình Chọn";
+"create_vote" = "Tạo Bình Chọn";
+"vote_title" = "Tiêu Đề Bình Chọn";
+"vote_description" = "Mô Tả Bình Chọn";
+"add_dishes" = "Thêm Món Ăn";
+"search_and_add" = "Tìm & Thêm Món Ăn";
+"add_custom_dish" = "Thêm Món Ăn Tùy Chỉnh";
+"custom_dish_title" = "Tên Món Ăn Tùy Chỉnh";
+"custom_dish_url" = "URL Món Ăn Tùy Chỉnh (tùy chọn)";
+"dish_added" = "Đã Thêm Món Ăn";
+"remove_dish" = "Xóa Món Ăn";
+"create_voting_session" = "Tạo Phiên Bình Chọn";
+"selected_dishes" = "Món Ăn Đã Chọn";
+"no_dishes_selected" = "Chưa chọn món ăn nào";
+"add_dish_prompt" = "Tìm kiếm món ăn hoặc thêm món ăn tùy chỉnh để tạo phiên bình chọn";
+"vote_created_successfully" = "Tạo bình chọn thành công!";
+"minimum_dishes_required" = "Vui lòng thêm ít nhất 2 món ăn để tạo bình chọn";
+"enter_vote_title" = "Vui lòng nhập tiêu đề bình chọn";
+"dish_already_added" = "Món ăn này đã được thêm";
+"custom_dish" = "Món Ăn Tùy Chỉnh";
+"from_database" = "Từ Cơ Sở Dữ Liệu";
+"add_more_dishes" = "Thêm Món Ăn Khác";
+"save" = "Lưu";
+"clear_all" = "Xóa Tất Cả";
+"confirm_clear" = "Bạn có chắc chắn muốn xóa tất cả món ăn đã chọn?";
+"clear" = "Xóa";
+
+// Voting Game List View
+"search_vote_games" = "Tìm kiếm trò chơi bình chọn...";
+"no_vote_games_found" = "Không Tìm Thấy Trò Chơi Bình Chọn";
+"try_adjusting_search" = "Hãy thử điều chỉnh tiêu chí tìm kiếm hoặc bộ lọc";
+"create_first_vote_game" = "Tạo trò chơi bình chọn đầu tiên để bắt đầu";
+"back" = "Quay Lại";
+"active" = "Đang Hoạt Động";
+"dishes" = "món ăn";
+"votes" = "lượt bình chọn";
+"dishes_in_this_vote" = "Món ăn trong bình chọn này:";
+"view_results" = "Xem Kết Quả";
+"vote_now" = "Bình Chọn Ngay";
+"more" = "thêm";
+"custom" = "Tùy Chỉnh";
+
+// Filter and Sort
+"filter" = "Bộ Lọc";
+"sort_by" = "Sắp Xếp Theo";
+"sort_order" = "Thứ Tự Sắp Xếp";
+"creation_date" = "Ngày Tạo";
+"title" = "Tiêu Đề";
+"vote_count" = "Số Lượng Bình Chọn";
+"dish_count" = "Số Lượng Món Ăn";
+"newest_first" = "Mới Nhất Trước";
+"oldest_first" = "Cũ Nhất Trước";
+"ascending" = "Tăng Dần";
+"descending" = "Giảm Dần";
+"most_popular" = "Phổ Biến Nhất";
+"recently_created" = "Mới Tạo Gần Đây";
+"most_dishes" = "Nhiều Món Ăn Nhất";
+"alphabetical" = "Theo Bảng Chữ Cái";
+"apply_filters" = "Áp Dụng Bộ Lọc";
+"reset_filters" = "Đặt Lại Bộ Lọc";
+"quick_filters" = "Bộ Lọc Nhanh";
+
+// Vote Results View
+"view_results" = "Xem Kết Quả";
+"voting_results" = "Kết Quả Bình Chọn";
+"winner" = "Người Chiến Thắng";
+"all_results" = "Tất Cả Kết Quả";
+"vote_statistics" = "Thống Kê Bình Chọn";
+"total_votes" = "Tổng Số Bình Chọn";
+"total_dishes" = "Tổng Số Món Ăn";
+"created" = "Ngày Tạo";
+"votes" = "lượt bình chọn";

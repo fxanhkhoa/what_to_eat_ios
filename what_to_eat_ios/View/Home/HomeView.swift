@@ -69,7 +69,13 @@ struct HomeView: View {
                                         .padding()
                                         .frame(maxWidth: .infinity, alignment: .center)
                                 } else {
-                                    Carousel(buildDishCards(), spacing: 16, itemWidth: UIScreen.main.bounds.width - 32, height: 250)
+                                    Carousel(
+                                        buildDishCards(),
+                                        spacing: 16,
+                                        itemWidth: UIScreen.main.bounds.width - 32,
+                                        height: 250,
+                                        autoScrollInterval: 5.0
+                                    )
                                 }
                             }
                             

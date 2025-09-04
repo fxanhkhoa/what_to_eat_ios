@@ -16,6 +16,8 @@ class DishService {
     private let networkMonitor = NetworkMonitor.shared
     private let logger = Logger(subsystem: "io.vn.eatwhat", category: "DishService")
     
+    private var dishCache: [String: Dish] = [:]
+    
     init(urlSession: URLSession = .shared) {
         // Create URL session with increased timeout and better configuration
         let configuration = URLSessionConfiguration.default
@@ -73,7 +75,7 @@ class DishService {
                     self.logger.info("Starting findAll request")
                 },
                 receiveOutput: { response in
-                    self.logger.info("Received \(response.data.count) dishes")
+                    self.logger.info("Received \(response.count) dishes")
                 },
                 receiveCompletion: { completion in
                     if case .failure(let error) = completion {
@@ -90,6 +92,13 @@ class DishService {
     }
     
     func findBySlug(slug: String) -> AnyPublisher<Dish, Error> {
+        // Check cache first
+        if let cachedDish = dishCache[slug] {
+            return Just(cachedDish)
+                .setFailureType(to: Error.self)
+                .eraseToAnyPublisher()
+        }
+        // Check network connection
         guard networkMonitor.isConnected else {
             return Fail(error: URLError(.notConnectedToInternet)).eraseToAnyPublisher()
         }
@@ -106,6 +115,9 @@ class DishService {
         return urlSession.dataTaskPublisher(for: request)
             .map(\.data)
             .decode(type: Dish.self, decoder: jsonDecoder)
+            .handleEvents(receiveOutput: { [weak self] dish in
+                self?.dishCache[slug] = dish
+            })
             .eraseToAnyPublisher()
     }
     
