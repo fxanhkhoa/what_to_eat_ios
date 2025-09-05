@@ -190,20 +190,20 @@ struct VoteResultsView: View {
     // MARK: - Share Results
     
     private func generateShareText() -> String {
-        var text = "🗳️ Voting Results: \(dishVote.title)\n\n"
+        var text = "\(localization.localizedString(for: "share_voting_results")): \(dishVote.title)\n\n"
         
         if let winner = winner, winner.totalVotes > 0 {
             let dishName = winner.displayName
-            text += "🏆 Winner: \(dishName) with \(winner.totalVotes) votes!\n\n"
+            text += "\(localization.localizedString(for: "share_winner")): \(dishName) \(localization.localizedString(for: "share_with")) \(winner.totalVotes) \(localization.localizedString(for: "votes"))!\n\n"
         }
         
-        text += "📊 All Results:\n"
+        text += "\(localization.localizedString(for: "share_all_results")):\n"
         for (index, result) in enrichedVoteResults.enumerated() {
             let dishName = result.displayName
-            text += "\(index + 1). \(dishName): \(result.totalVotes) votes\n"
+            text += "\(index + 1). \(dishName): \(result.totalVotes) \(localization.localizedString(for: "votes"))\n"
         }
         
-        text += "\nTotal votes: \(totalVotesCount)"
+        text += "\n\(localization.localizedString(for: "total_votes")): \(totalVotesCount)"
         return text
     }
 }

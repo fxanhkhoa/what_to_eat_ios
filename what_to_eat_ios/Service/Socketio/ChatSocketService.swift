@@ -15,10 +15,12 @@ class ChatSocketService: ObservableObject {
     
     // MARK: - Published Properties
     @Published var messages: [ChatMessage] = []
-    @Published var onlineUsers: [ChatUser] = []
+    @Published var onlineUsers: [ChatUserInApp] = []
     @Published var typingUsers: [String] = []
     @Published var newMessage: ChatMessage?
     @Published var connectionError: String?
+    @Published var isLoadingMore = false
+    @Published var hasMoreMessages = true
     
     // MARK: - Private Properties
     private let socketManager = SocketIOManager.shared
@@ -160,22 +162,35 @@ class ChatSocketService: ObservableObject {
         typingTimer?.invalidate()
         socketManager.emit("typing_stop", data: [
             "room": roomName,
-            "userId": currentUserId,
-            "userName": currentUserName
+            "senderId": currentUserId,
+            "senderName": currentUserName
         ])
     }
     
-    /// Get message history for current room
-    func loadMessageHistory(limit: Int = 50) {
+    /// Get message history for current room with optional pagination
+    func loadMessageHistory(limit: Int = 50, loadMore: Bool = false) {
         guard let roomName = currentChatRoom else { return }
+        
+        if loadMore {
+            isLoadingMore = true
+        }
+        
+        let beforeTimestamp = loadMore ? messages.first?.timestamp ?? Date().timeIntervalSince1970 : Date().timeIntervalSince1970
         
         let historyData: [String: Any] = [
             "room": roomName,
             "limit": limit,
-            "before": messages.first?.timestamp ?? Date().timeIntervalSince1970
+            "before": beforeTimestamp
         ]
         
+        logger.info("Loading message history for room: \(roomName), limit: \(limit), loadMore: \(loadMore)")
         socketManager.emit("get_message_history", data: historyData)
+    }
+    
+    /// Load more older messages
+    func loadMoreMessages() {
+        guard hasMoreMessages && !isLoadingMore else { return }
+        loadMessageHistory(limit: 20, loadMore: true)
     }
     
     /// React to a message
@@ -382,8 +397,16 @@ class ChatSocketService: ObservableObject {
         guard let data = event.data.first as? [String: Any],
               let messagesData = data["messages"] as? [[String: Any]] else {
             logger.error("Invalid message history data")
+            isLoadingMore = false
             return
         }
+        
+        // Check if this is the end of messages (no more to load)
+        _ = data["total"] as? Int
+        let currentCount = data["count"] as? Int ?? messagesData.count
+        let hasMore = data["hasMore"] as? Bool ?? (currentCount >= 20) // Assume has more if we got a full batch
+        
+        hasMoreMessages = hasMore
         
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: messagesData)
@@ -409,21 +432,27 @@ class ChatSocketService: ObservableObject {
                 )
             }
             
-            // Filter out duplicates and prepend history messages (they're older)
-            let uniqueMessages = convertedMessages.filter { convertedMsg in
-                !messages.contains { $0.id == convertedMsg.id }
+            if isLoadingMore {
+                // For load more, prepend older messages and filter duplicates
+                let uniqueMessages = convertedMessages.filter { convertedMsg in
+                    !messages.contains { $0.id == convertedMsg.id }
+                }
+                self.messages = uniqueMessages + self.messages
+            } else {
+                // For initial load, replace all messages
+                self.messages = convertedMessages
             }
- 
-            self.messages = uniqueMessages + self.messages
-            self.messages.sort { $0.timestamp < $1.timestamp }
-
             
-            logger.info("Loaded \(historyMessages.count) messages from history")
+            self.messages.sort { $0.timestamp < $1.timestamp }
+            
+            logger.info("Loaded \(historyMessages.count) messages from history (hasMore: \(hasMore))")
             event.acknowledge()
             
         } catch {
             logger.error("Failed to decode message history: \(error.localizedDescription)")
         }
+        
+        isLoadingMore = false
     }
     
     private func handleUserJoinedChat(_ event: SocketEvent) {
@@ -436,11 +465,11 @@ class ChatSocketService: ObservableObject {
             let jsonData = try JSONSerialization.data(withJSONObject: data)
             let user = try JSONDecoder().decode(ChatUser.self, from: jsonData)
             
-            if !onlineUsers.contains(where: { $0.id == user.id }) {
-                onlineUsers.append(user)
+            if !onlineUsers.contains(where: { $0.id == user.userId }) {
+                onlineUsers.append(ChatUserInApp(id: user.userId, name: user.userName, isOnline: true))
             }
             
-            logger.info("User joined chat: \(user.name)")
+            logger.info("User joined chat: \(user.userName)")
             event.acknowledge()
             
         } catch {
@@ -512,6 +541,40 @@ class ChatSocketService: ObservableObject {
             return
         }
         
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: data)
+            let roomData = try JSONDecoder().decode(ChatRoomUpdated.self, from: jsonData)
+            let userService = UserService.shared
+            let newUserIds = Set(roomData.onlineUsers)
+            
+            // Remove users who are no longer online
+            onlineUsers.removeAll { !newUserIds.contains($0.id) }
+            
+            // For each userId, ensure we have a ChatUserInApp with name
+            for userId in roomData.onlineUsers {
+                if let existing = onlineUsers.first(where: { $0.id == userId && !$0.name.isEmpty }) {
+                    // Already have user with name, skip
+                    continue
+                }
+                // Add placeholder if not present
+                if !onlineUsers.contains(where: { $0.id == userId }) {
+                    onlineUsers.append(ChatUserInApp(id: userId, name: "", isOnline: true))
+                }
+                // Fetch user name if missing
+                userService.findOne(id: userId)
+                    .receive(on: DispatchQueue.main)
+                    .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] user in
+                        guard let self = self else { return }
+                        if let idx = self.onlineUsers.firstIndex(where: { $0.id == userId }) {
+                            self.onlineUsers[idx] = ChatUserInApp(id: userId, name: user.name ?? user.email, isOnline: true)
+                        }
+                    })
+                    .store(in: &cancellables)
+            }
+        } catch {
+            print(String(describing: error))
+        }
+
         logger.info("Chat room updated: \(data)")
         event.acknowledge()
     }

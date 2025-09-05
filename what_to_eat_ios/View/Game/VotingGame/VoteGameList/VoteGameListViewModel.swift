@@ -20,6 +20,8 @@ class VoteGameListViewModel: ObservableObject {
     @Published var sortBy: String = "createdAt"
     @Published var sortOrder: String = "desc"
     
+    @Published var showingVoteGame: Bool = false
+    
     private let dishVoteService = DishVoteService()
     private var cancellables = Set<AnyCancellable>()
     private let pageSize = 20
@@ -35,11 +37,11 @@ class VoteGameListViewModel: ObservableObject {
     
     func loadVoteGames() {
         guard !isLoading else { return }
-        
-        isLoading = true
-        currentPage = 1
-        errorMessage = nil
-        
+        DispatchQueue.main.async { [weak self] in
+            self?.isLoading = true
+            self?.currentPage = 1
+            self?.errorMessage = nil
+        }
         let filter = DishVoteFilter(
             keyword: searchKeyword.isEmpty ? nil : searchKeyword,
             page: currentPage,
@@ -47,13 +49,11 @@ class VoteGameListViewModel: ObservableObject {
             sortBy: sortBy,
             sortOrder: sortOrder
         )
-        
         dishVoteService.findAll(filter: filter)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
                     self?.isLoading = false
-                    
                     if case .failure(let error) = completion {
                         self?.errorMessage = error.localizedDescription
                     }
@@ -66,6 +66,7 @@ class VoteGameListViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+    @MainActor
     func refreshVoteGames() async {
         currentPage = 1
         loadVoteGames()

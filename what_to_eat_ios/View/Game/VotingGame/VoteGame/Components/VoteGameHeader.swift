@@ -10,6 +10,8 @@ import SwiftUI
 struct VoteGameHeader: View {
     let voteGame: DishVote
     
+    let localization = LocalizationService.shared
+    
     private func totalVotes(_ voteGame: DishVote) -> Int {
         voteGame.dishVoteItems.reduce(0) { total, item in
             total + item.voteUser.count + item.voteAnonymous.count
@@ -30,13 +32,13 @@ struct VoteGameHeader: View {
             
             // Live indicators
             HStack {
-                Label("Live Updates", systemImage: "antenna.radiowaves.left.and.right")
+                Label(localization.localizedString(for: "live_updates"), systemImage: "antenna.radiowaves.left.and.right")
                     .font(.caption)
                     .foregroundColor(.green)
                 
                 Spacer()
                 
-                Text("\(totalVotes(voteGame)) votes")
+                Text(String(format: localization.localizedString(for: "votes_count"), totalVotes(voteGame)))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

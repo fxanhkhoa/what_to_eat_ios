@@ -87,6 +87,9 @@
 "message_sent_success" = "Your message has been sent successfully!";
 "success" = "Success";
 
+//Player Info
+"playing_as" = "Playing as: %@";
+
 //Wheel of Fortune Game
 "wheel_of_fortune" = "Wheel of Fortune";
 "wheel_of_fortune_description" = "Spin the wheel to discover your next meal!";
@@ -287,10 +290,19 @@
 "add_dishes" = "Add Dishes";
 "search_and_add" = "Search & Add Dishes";
 "add_custom_dish" = "Add Custom Dish";
-"custom_dish_title" = "Custom Dish Title";
-"custom_dish_url" = "Custom Dish URL (optional)";
-"dish_added" = "Dish Added";
-"remove_dish" = "Remove Dish";
+"custom_dish_header_desc" = "Create a custom dish entry with a title and optional image URL";
+"custom_dish_title" = "Dish Title";
+"custom_dish_title_placeholder" = "Enter dish title";
+"custom_dish_url" = "Dish Image URL";
+"custom_dish_url_placeholder" = "https://example.com/dish-image.jpg";
+"custom_dish_url_helper" = "The URL is optional and can be used for a dish image. If not provided, a default icon will be used.";
+"Preview" = "Preview";
+"custom_dish" = "Custom Dish";
+"custom_dish_preview_placeholder" = "Enter a dish title to see preview";
+"custom_dish_bottom_desc" = "Title required, URL optional";
+"custom_dish_alert_empty_title" = "Please enter a dish title";
+"custom_dish_alert_duplicate_title" = "A custom dish with this title already exists";
+"custom_dish_alert_invalid_url" = "Please enter a valid URL or leave it empty";
 "create_voting_session" = "Create Voting Session";
 "selected_dishes" = "Selected Dishes";
 "no_dishes_selected" = "No dishes selected yet";
@@ -301,14 +313,15 @@
 "dish_already_added" = "This dish is already added";
 "custom_dish" = "Custom Dish";
 "from_database" = "From Database";
-"add_more_dishes" = "Add More Dishes";
-"done" = "Done";
-"save" = "Save";
-"clear_all" = "Clear All";
+"minimum_dishes_required" = "Please add at least 2 dishes to create a vote";
+"create_voting_session" = "Create Voting Session";
+"enter_vote_title" = "Please enter a vote title";
+"add_dish_prompt" = "Search for dishes or add custom ones to create your voting session";
 "confirm_clear" = "Are you sure you want to clear all selected dishes?";
 "clear" = "Clear";
+"dishes" = "dishes";
 
-// Voting Game List View
+/* Voting Game List View */
 "search_vote_games" = "Search vote games...";
 "no_vote_games_found" = "No Vote Games Found";
 "try_adjusting_search" = "Try adjusting your search or filter criteria";
@@ -320,6 +333,21 @@
 "dishes_in_this_vote" = "Dishes in this vote:";
 "view_results" = "View Results";
 "vote_now" = "Vote Now";
+"more" = "more";
+"custom" = "Custom";
+
+// Voting Game List View additions
+"login_required" = "Login Required";
+"login_required_message" = "Please login to access voting games and participate in community voting.";
+"login_to_continue" = "Login to Continue";
+"go_back" = "Go Back";
+"voting_games" = "Voting Games";
+"no_vote_games_found" = "No Vote Games Found";
+"create_first_vote_game" = "Create your first vote game to get started";
+"active" = "Active";
+"view_results" = "View Results";
+"vote_now" = "Vote Now";
+"dishes_in_this_vote" = "Dishes in this vote:";
 "more" = "more";
 "custom" = "Custom";
 
@@ -341,4 +369,58 @@
 "alphabetical" = "Alphabetical";
 "apply_filters" = "Apply Filters";
 "reset_filters" = "Reset Filters";
+
+// VoteGameFilterView
+"filter_vote_games" = "Filter Vote Games";
+"filter_and_sort" = "Filter & Sort";
+"customize_vote_games_display" = "Customize how vote games are displayed and sorted";
+"sort_options" = "Sort Options";
+"sort_by" = "Sort By";
+"creation_date" = "Creation Date";
+"sort_by_creation_date" = "When the vote was created";
+"title" = "Title";
+"sort_by_title" = "Alphabetical by vote title";
+"vote_count" = "Vote Count";
+"sort_by_vote_count" = "Number of votes received";
+"dish_count" = "Dish Count";
+"sort_by_dish_count" = "Number of dishes in the vote";
+"sort_order" = "Sort Order";
+"newest_first" = "Newest First";
+"oldest_first" = "Oldest First";
 "quick_filters" = "Quick Filters";
+"most_popular" = "Most Popular";
+"sort_by_vote_count_desc" = "Sort by vote count (highest first)";
+"recently_created" = "Recently Created";
+"show_newest_first" = "Show newest vote games first";
+"most_dishes" = "Most Dishes";
+"votes_with_most_dishes" = "Votes with the most dish options";
+"alphabetical" = "Alphabetical";
+"sort_by_title_az" = "Sort by title A to Z";
+"reset" = "Reset";
+"apply_filters" = "Apply Filters";
+"live_vote_game" = "Live Vote Game";
+"live" = "Live";
+"disconnected" = "Disconnected";
+"reconnect" = "Reconnect";
+
+// Live Chat
+"live_chat" = "Live Chat";
+
+// Vote Results
+"live_results" = "Live Results";
+
+// Vote Game Header
+"live_updates" = "Live Updates";
+"votes_count" = "%d votes";
+
+// Vote Result Row
+"untitled" = "Untitled";
+"custom_dish" = "Custom";
+
+// Voting Game
+"voters_count" = "%d voters";
+"voter_singular" = "%d anonymous voter";
+"voter_plural" = "%d anonymous voters";
+"loading_voters" = "Loading voters...";
+"cast_your_vote" = "Cast Your Vote";
+"submit_vote" = "Submit Vote";

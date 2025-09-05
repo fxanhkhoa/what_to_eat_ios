@@ -12,6 +12,8 @@ struct RealTimeVoteResults: View {
     let selectedDish: String?
     let dishes: [Dish]
     
+    let localization = LocalizationService.shared
+    
     private func dishForSlug(_ slug: String) -> Dish? {
         dishes.first(where: { $0.slug == slug })
     }
@@ -24,7 +26,7 @@ struct RealTimeVoteResults: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Live Results")
+            Text(localization.localizedString(for: "live_results"))
                 .font(.headline)
             
             ForEach(voteGame.dishVoteItems, id: \.slug) { item in

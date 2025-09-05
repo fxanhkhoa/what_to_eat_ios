@@ -17,6 +17,8 @@ struct CustomDishAddView: View {
     @State private var showingAlert = false
     @State private var alertMessage = ""
     
+    let localization = LocalizationService.shared
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -37,19 +39,19 @@ struct CustomDishAddView: View {
                 // Bottom Action Bar
                 bottomActionBar
             }
-            .navigationTitle("add_custom_dish")
+            .navigationTitle(localization.localizedString(for: "add_custom_dish"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("cancel") {
+                    Button(localization.localizedString(for: "cancel")) {
                         dismiss()
                     }
                 }
             }
-            .alert("Error", isPresented: $showingAlert) {
-                Button("ok") { }
+            .alert(localization.localizedString(for: "Error"), isPresented: $showingAlert) {
+                Button(localization.localizedString(for: "ok")) { }
             } message: {
-                Text(alertMessage)
+                Text(localization.localizedString(for: alertMessage))
             }
         }
     }
@@ -62,7 +64,7 @@ struct CustomDishAddView: View {
                     .font(.title2)
                     .foregroundColor(Color("PrimaryColor"))
                 
-                Text("add_custom_dish")
+                Text(localization.localizedString(for: "add_custom_dish"))
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
@@ -70,7 +72,7 @@ struct CustomDishAddView: View {
                 Spacer()
             }
             
-            Text("Create a custom dish entry with a title and optional image URL")
+            Text(localization.localizedString(for: "custom_dish_header_desc"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.leading)
@@ -90,7 +92,7 @@ struct CustomDishAddView: View {
             // Dish Title Input
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text("custom_dish_title")
+                    Text(localization.localizedString(for: "custom_dish_title"))
                         .font(.headline)
                         .foregroundColor(.primary)
                     
@@ -99,18 +101,18 @@ struct CustomDishAddView: View {
                         .foregroundColor(.red)
                 }
                 
-                TextField("Enter dish title", text: $dishTitle)
+                TextField(localization.localizedString(for: "custom_dish_title_placeholder"), text: $dishTitle)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .autocapitalization(.words)
             }
             
             // Dish URL Input
             VStack(alignment: .leading, spacing: 8) {
-                Text("custom_dish_url")
+                Text(localization.localizedString(for: "custom_dish_url"))
                     .font(.headline)
                     .foregroundColor(.primary)
                 
-                TextField("https://example.com/dish-image.jpg", text: $dishURL)
+                TextField(localization.localizedString(for: "custom_dish_url_placeholder"), text: $dishURL)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .keyboardType(.URL)
                     .autocapitalization(.none)
@@ -118,7 +120,7 @@ struct CustomDishAddView: View {
             }
             
             // Helper Text
-            Text("The URL is optional and can be used for a dish image. If not provided, a default icon will be used.")
+            Text(localization.localizedString(for: "custom_dish_url_helper"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.leading)
@@ -135,7 +137,7 @@ struct CustomDishAddView: View {
     // MARK: - Preview Section
     private var previewSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Preview")
+            Text(localization.localizedString(for: "Preview"))
                 .font(.headline)
                 .foregroundColor(.primary)
             
@@ -167,7 +169,7 @@ struct CustomDishAddView: View {
                                 .foregroundColor(.primary)
                                 .lineLimit(1)
                             
-                            Text("custom_dish")
+                            Text(localization.localizedString(for: "custom_dish"))
                                 .font(.caption2)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
@@ -192,7 +194,7 @@ struct CustomDishAddView: View {
                         .fill(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
                 )
             } else {
-                Text("Enter a dish title to see preview")
+                Text(localization.localizedString(for: "custom_dish_preview_placeholder"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .italic()
@@ -215,11 +217,11 @@ struct CustomDishAddView: View {
             
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Custom Dish")
+                    Text(localization.localizedString(for: "custom_dish"))
                         .font(.headline)
                         .foregroundColor(.primary)
                     
-                    Text("Title required, URL optional")
+                    Text(localization.localizedString(for: "custom_dish_bottom_desc"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -231,7 +233,7 @@ struct CustomDishAddView: View {
                 }) {
                     HStack {
                         Image(systemName: "plus")
-                        Text("add_custom_dish")
+                        Text(localization.localizedString(for: "add_custom_dish"))
                             .fontWeight(.semibold)
                     }
                     .foregroundColor(.white)
@@ -262,14 +264,14 @@ struct CustomDishAddView: View {
         let trimmedURL = dishURL.trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard !trimmedTitle.isEmpty else {
-            alertMessage = "Please enter a dish title"
+            alertMessage = "custom_dish_alert_empty_title"
             showingAlert = true
             return
         }
         
         // Check if custom dish with same title already exists
         if viewModel.selectedDishes.contains(where: { $0.isCustom && $0.customTitle == trimmedTitle }) {
-            alertMessage = "A custom dish with this title already exists"
+            alertMessage = "custom_dish_alert_duplicate_title"
             showingAlert = true
             return
         }
@@ -277,7 +279,7 @@ struct CustomDishAddView: View {
         // Validate URL if provided
         if !trimmedURL.isEmpty {
             if !isValidURL(trimmedURL) {
-                alertMessage = "Please enter a valid URL or leave it empty"
+                alertMessage = "custom_dish_alert_invalid_url"
                 showingAlert = true
                 return
             }

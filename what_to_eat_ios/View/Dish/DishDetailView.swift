@@ -24,6 +24,15 @@ struct DishDetailView: View {
     var body: some View {
         NavigationView {
             ZStack {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        colorScheme == .dark ? Color(.systemGray6) : Color(.systemBackground),
+                        colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6)
+                    ]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
                         // Hero Image Section

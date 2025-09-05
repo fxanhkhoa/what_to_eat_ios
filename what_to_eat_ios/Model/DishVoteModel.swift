@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - DishVoteItem
-struct DishVoteItem: Codable, Identifiable {
+struct DishVoteItem: Codable, Identifiable, Equatable {
     let id = UUID()
     let slug: String
     let customTitle: String?
@@ -22,7 +22,7 @@ struct DishVoteItem: Codable, Identifiable {
 }
 
 // MARK: - DishVote
-struct DishVote: Codable, Identifiable {
+struct DishVote: Codable, Identifiable, Equatable {
     let id: String
     let deleted: Bool
     let createdAt: String

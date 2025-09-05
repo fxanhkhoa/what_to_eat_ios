@@ -59,12 +59,18 @@ struct ChatHistoryMessage: Codable, Identifiable {
     }
 }
 
-struct ChatUser: Codable, Identifiable {
-    let id: String
-    let name: String
+struct ChatUser: Codable {
+    let userId: String
+    let userName: String
     let avatar: String?
     let isOnline: Bool
     let lastSeen: TimeInterval?
+}
+
+struct ChatUserInApp: Codable {
+    let id: String
+    let name: String
+    let isOnline: Bool
 }
 
 enum ChatMessageType: String, Codable, CaseIterable {
@@ -81,4 +87,51 @@ enum ChatRoomType: String, Codable, CaseIterable {
     case general = "general"
     case direct = "direct"
     case group = "group"
+}
+
+// MARK: - Chat Room Models
+
+struct ChatRoom: Codable, Identifiable {
+    let id: String?
+    let name: String
+    let type: String // Can be ChatRoomType enum or custom string
+    let roomId: String // External reference ID (e.g., vote game ID)
+    let participants: [String] // User IDs
+    let onlineUsers: [String]
+    let typingUsers: [String]
+    let createdAt: String // ISO string format
+    let updatedAt: String
+    let deleted: Bool
+    
+    // Computed property to get ChatRoomType if it matches
+    var roomType: ChatRoomType? {
+        ChatRoomType(rawValue: type)
+    }
+    
+    // Date computed properties for convenience
+    var createdDate: Date? {
+        ISO8601DateFormatter().date(from: createdAt)
+    }
+    
+    var updatedDate: Date? {
+        ISO8601DateFormatter().date(from: updatedAt)
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case id = "id"
+        case name
+        case type
+        case roomId
+        case participants
+        case onlineUsers
+        case typingUsers
+        case createdAt
+        case updatedAt
+        case deleted
+    }
+}
+
+struct ChatRoomUpdated: Codable {
+    let onlineUsers: [String]
+    let room: ChatRoom
 }

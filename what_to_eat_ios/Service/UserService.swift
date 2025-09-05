@@ -16,8 +16,10 @@ class UserService: ObservableObject {
     private let logger = Logger(subsystem: "io.vn.eatwhat", category: "UserService")
     private let prefix = "user"
     
-    // Cache for user requests to avoid duplicate API calls
-    private var userCache = [String: AnyPublisher<UserModel, Error>]()
+    // Cache for actual user data (value-based caching)
+    private var userDataCache = [String: UserModel]()
+    // Cache for ongoing requests to prevent duplicate API calls
+    private var ongoingRequests = [String: AnyPublisher<UserModel, Error>]()
     private let cacheQueue = DispatchQueue(label: "userservice.cache", attributes: .concurrent)
     
     private init() {
@@ -34,10 +36,18 @@ class UserService: ObservableObject {
     /// Find a user by ID with caching
     func findOne(id: String) -> AnyPublisher<UserModel, Error> {
         return cacheQueue.sync {
-            // Check if request is already cached
-            if let cachedRequest = userCache[id] {
-                logger.debug("Returning cached user request for ID: \(id)")
-                return cachedRequest
+            // First check if we have cached data
+            if let cachedUser = userDataCache[id] {
+                logger.debug("Returning cached user data for ID: \(id)")
+                return Just(cachedUser)
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
+            
+            // Check if request is already in progress
+            if let ongoingRequest = ongoingRequests[id] {
+                logger.debug("Returning ongoing request for ID: \(id)")
+                return ongoingRequest
             }
             
             // Create new request
@@ -56,22 +66,29 @@ class UserService: ObservableObject {
                 .handleEvents(
                     receiveOutput: { [weak self] user in
                         self?.logger.info("Successfully fetched user: \(user.email)")
+                        // Cache the actual user data
+                        self?.cacheQueue.async(flags: .barrier) {
+                            self?.userDataCache[id] = user
+                        }
                     },
                     receiveCompletion: { [weak self] completion in
+                        // Remove from ongoing requests after completion
+                        self?.cacheQueue.async(flags: .barrier) {
+                            self?.ongoingRequests.removeValue(forKey: id)
+                        }
+                        
                         if case .failure(let error) = completion {
                             self?.logger.error("Failed to fetch user with ID \(id): \(error.localizedDescription)")
-                            // Remove failed request from cache
-                            self?.cacheQueue.async(flags: .barrier) {
-                                self?.userCache.removeValue(forKey: id)
-                            }
+                        } else {
+                            self?.logger.debug("Completed user request for ID: \(id)")
                         }
                     }
                 )
-                .share()
+                .share() // Share the subscription among multiple subscribers
                 .eraseToAnyPublisher()
             
-            // Cache the request
-            userCache[id] = publisher
+            // Cache the ongoing request to prevent duplicates
+            ongoingRequests[id] = publisher
             
             return publisher
         }
@@ -142,7 +159,7 @@ class UserService: ObservableObject {
                     self?.logger.info("Successfully updated user: \(updatedUser.email)")
                     // Remove from cache to ensure fresh data on next request
                     self?.cacheQueue.async(flags: .barrier) {
-                        self?.userCache.removeValue(forKey: user.id)
+                        self?.userDataCache.removeValue(forKey: user.id)
                     }
                 },
                 receiveCompletion: { [weak self] completion in
@@ -194,7 +211,7 @@ class UserService: ObservableObject {
                             self?.logger.info("Successfully deleted user with ID: \(id)")
                             // Remove from cache
                             self?.cacheQueue.async(flags: .barrier) {
-                                self?.userCache.removeValue(forKey: id)
+                                self?.userDataCache.removeValue(forKey: id)
                             }
                         }
                     },
@@ -251,7 +268,7 @@ class UserService: ObservableObject {
     /// Clear the user cache
     func clearCache() {
         cacheQueue.async(flags: .barrier) { [weak self] in
-            self?.userCache.removeAll()
+            self?.userDataCache.removeAll()
             self?.logger.info("User cache cleared")
         }
     }
@@ -259,7 +276,7 @@ class UserService: ObservableObject {
     /// Remove specific user from cache
     func removeCachedUser(id: String) {
         cacheQueue.async(flags: .barrier) { [weak self] in
-            self?.userCache.removeValue(forKey: id)
+            self?.userDataCache.removeValue(forKey: id)
             self?.logger.debug("Removed user \(id) from cache")
         }
     }
@@ -267,7 +284,7 @@ class UserService: ObservableObject {
     /// Check if user is cached
     func isUserCached(id: String) -> Bool {
         return cacheQueue.sync {
-            return userCache[id] != nil
+            return userDataCache[id] != nil
         }
     }
 }

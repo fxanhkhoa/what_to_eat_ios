@@ -30,17 +30,17 @@ struct DishSearchAndSelectView: View {
                 // Bottom Action Bar
                 bottomActionBar
             }
-            .navigationTitle("search_and_add")
+            .navigationTitle(localization.localizedString(for: "search_and_add"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("cancel") {
+                    Button(localization.localizedString(for: "cancel")) {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("done") {
+                    Button(localization.localizedString(for: "done")) {
                         addSelectedDishes()
                         dismiss()
                     }
@@ -62,7 +62,7 @@ struct DishSearchAndSelectView: View {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.gray)
             
-            TextField("search_dishes", text: $searchText)
+            TextField(localization.localizedString(for: "search_dishes"), text: $searchText)
                 .textFieldStyle(PlainTextFieldStyle())
             
             if !searchText.isEmpty {
@@ -122,12 +122,12 @@ struct DishSearchAndSelectView: View {
             
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("\(selectedDishes.count) dishes selected")
+                    Text("\(selectedDishes.count) " + localization.localizedString(for: "dishes_selected"))
                         .font(.headline)
                         .foregroundColor(.primary)
                     
                     if !selectedDishes.isEmpty {
-                        Text("add_more_dishes")
+                        Text(localization.localizedString(for: "add_more_dishes"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -141,7 +141,7 @@ struct DishSearchAndSelectView: View {
                 }) {
                     HStack {
                         Image(systemName: "plus")
-                        Text("add_dishes")
+                        Text(localization.localizedString(for: "add_dishes"))
                             .fontWeight(.semibold)
                     }
                     .foregroundColor(.white)

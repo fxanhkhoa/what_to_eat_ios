@@ -24,6 +24,8 @@ struct RealTimeVoteGameView: View {
     @State private var voteDishes: [Dish] = []
     @State private var cancellables = Set<AnyCancellable>()
     
+    let localization = LocalizationService.shared
+    
     private let dishvoteService = DishVoteService()
     private let dishService = DishService()
     
@@ -87,7 +89,7 @@ struct RealTimeVoteGameView: View {
                     Spacer()
                 }
             }
-            .navigationTitle("Live Vote Game")
+            .navigationTitle(localization.localizedString(for: "live_vote_game"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

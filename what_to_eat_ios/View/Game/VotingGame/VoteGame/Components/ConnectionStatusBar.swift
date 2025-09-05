@@ -11,20 +11,22 @@ struct ConnectionStatusBar: View {
     let isConnected: Bool
     let onReconnect: () -> Void
     
+    let localization = LocalizationService.shared
+    
     var body: some View {
         HStack {
             Circle()
                 .fill(isConnected ? Color.green : Color.red)
                 .frame(width: 8, height: 8)
             
-            Text(isConnected ? "Live" : "Disconnected")
+            Text(isConnected ? localization.localizedString(for: "live") : localization.localizedString(for: "disconnected"))
                 .font(.caption)
                 .foregroundColor(isConnected ? .green : .red)
             
             Spacer()
             
             if !isConnected {
-                Button("Reconnect") {
+                Button(localization.localizedString(for: "reconnect")) {
                     onReconnect()
                 }
                 .font(.caption)

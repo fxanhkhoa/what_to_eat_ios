@@ -14,13 +14,15 @@ struct VotingSection: View {
     let onDishSelect: (String) -> Void
     let onSubmitVote: () -> Void
     
+    let localization = LocalizationService.shared
+    
     private func dishForSlug(_ slug: String) -> Dish? {
         dishes.first(where: { $0.slug == slug })
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Cast Your Vote")
+            Text(localization.localizedString(for: "cast_your_vote"))
                 .font(.headline)
             
             LazyVGrid(columns: [
@@ -43,7 +45,7 @@ struct VotingSection: View {
                 Button(action: onSubmitVote) {
                     HStack {
                         Image(systemName: "hand.raised.fill")
-                        Text("Submit Vote")
+                        Text(localization.localizedString(for: "submit_vote"))
                     }
                     .frame(maxWidth: .infinity)
                     .padding()

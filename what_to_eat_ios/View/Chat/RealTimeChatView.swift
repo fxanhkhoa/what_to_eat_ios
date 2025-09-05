@@ -17,6 +17,8 @@ struct RealTimeChatView: View {
     @State private var messageText = ""
     @State private var isTyping = false
     @FocusState private var isMessageFieldFocused: Bool
+    @State private var anchorMessageId: String? = nil
+    @State private var isAtBottom: Bool = true // Track if user is at bottom
     
     // Get current user id from AuthService
     @ObservedObject private var authService = AuthService.shared
@@ -56,7 +58,24 @@ struct RealTimeChatView: View {
     private var chatMessagesView: some View {
         ScrollViewReader { proxy in
             ScrollView {
+                GeometryReader { geo in
+                    Color.clear
+                        .onChange(of: geo.frame(in: .named("chatScrollView")).maxY) {
+                            // If the user is at the bottom (within 20pt), set isAtBottom = true
+                            let scrollViewHeight = geo.size.height
+                            let contentHeight = geo.frame(in: .named("chatScrollView")).height
+                            let offset = contentHeight - scrollViewHeight - geo.frame(in: .named("chatScrollView")).minY
+                            isAtBottom = offset < 20
+                        }
+                        .frame(height: 0)
+                }
                 LazyVStack(spacing: 8) {
+                    // Load more button at the top
+                    if chatService.hasMoreMessages {
+                        loadMoreButton
+                            .id("loadMoreButton")
+                    }
+                    
                     ForEach(chatService.messages) { message in
                         let isMyMessage = message.senderId == authService.profile?.id
                         ChatMessageRow(message: message, isMyMessage: isMyMessage)
@@ -65,12 +84,27 @@ struct RealTimeChatView: View {
                 }
                 .padding()
             }
+            .coordinateSpace(name: "chatScrollView")
             .frame(height: 300)
-            // Scroll to bottom on new message or initial load
-            .onChange(of: chatService.messages.count) { _, _ in
-                if let lastId = chatService.messages.last?.id {
+            .refreshable {
+                // Set anchor to the first message before loading more
+                anchorMessageId = chatService.messages.first?.id
+                await loadMoreMessages()
+            }
+            .onChange(of: chatService.messages.count) { _ in
+                // If loading more, scroll to anchor message (first visible before load)
+                if let anchorId = anchorMessageId, !chatService.isLoadingMore {
                     withAnimation(.easeInOut(duration: 0.3)) {
-                        proxy.scrollTo(lastId, anchor: .bottom)
+                        proxy.scrollTo(anchorId, anchor: .top)
+                    }
+                    anchorMessageId = nil
+                } else if let lastMessage = chatService.messages.last, !chatService.isLoadingMore {
+                    // Only scroll to bottom for new messages if user is at bottom or last message is mine
+                    let isMyMessage = lastMessage.senderId == authService.profile?.id
+                    if isAtBottom || isMyMessage {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            proxy.scrollTo(lastMessage.id, anchor: .bottom)
+                        }
                     }
                 }
             }
@@ -101,12 +135,29 @@ struct RealTimeChatView: View {
     }
     
     private var typingIndicatorText: String {
-        let typingCount = chatService.typingUsers.count
-        if typingCount == 1 {
-            return "Someone is typing..."
-        } else if typingCount > 1 {
-            return "\(typingCount) people are typing..."
+        let typingUserIds = chatService.typingUsers
+        guard !typingUserIds.isEmpty else { return "" }
+        
+        // Get the names of users who are typing
+        let typingUserNames = typingUserIds.compactMap { userId in
+            // First try to find the user in onlineUsers
+            if let onlineUser = chatService.onlineUsers.first(where: { $0.id == userId }) {
+                return onlineUser.name
+            }
+            // If not found in online users, return the userId as fallback
+            return userId
         }
+        
+        let count = typingUserNames.count
+        if count == 1 {
+            return "\(typingUserNames[0]) is typing..."
+        } else if count == 2 {
+            return "\(typingUserNames[0]) and \(typingUserNames[1]) are typing..."
+        } else if count > 2 {
+            let firstNames = typingUserNames.prefix(2).joined(separator: ", ")
+            return "\(firstNames) and \(count - 2) others are typing..."
+        }
+        
         return ""
     }
     
@@ -130,6 +181,37 @@ struct RealTimeChatView: View {
             .disabled(messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
         .padding()
+    }
+    
+    // MARK: - Load More Button
+    
+    private var loadMoreButton: some View {
+        Button(action: {
+            // Set anchor to the first message before loading more
+            anchorMessageId = chatService.messages.first?.id
+            chatService.loadMoreMessages()
+        }) {
+            HStack(spacing: 8) {
+                if chatService.isLoadingMore {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                        .progressViewStyle(CircularProgressViewStyle(tint: .secondary))
+                } else {
+                    Image(systemName: "arrow.up.circle")
+                        .foregroundColor(.secondary)
+                }
+                
+                Text(chatService.isLoadingMore ? "Loading..." : "Load more messages")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
+            .background(Color(.systemGray5))
+            .cornerRadius(16)
+        }
+        .disabled(chatService.isLoadingMore)
+        .opacity(chatService.hasMoreMessages ? 1.0 : 0.5)
     }
     
     // MARK: - Helper Methods
@@ -160,7 +242,19 @@ struct RealTimeChatView: View {
         // Ensure socket is connected before joining the chat room
         chatService.connectSocket()
         chatService.joinChatRoom(roomId, roomType: roomType)
-        chatService.loadMessageHistory()
+        chatService.loadMessageHistory(limit: 25)
+    }
+    
+    // MARK: - Load More Messages
+    
+    private func loadMoreMessages() async {
+        guard chatService.hasMoreMessages && !chatService.isLoadingMore else { return }
+        chatService.loadMoreMessages()
+        
+        // Wait for the loading to complete
+        while chatService.isLoadingMore {
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        }
     }
 }
 

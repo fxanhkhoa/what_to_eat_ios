@@ -11,6 +11,7 @@ struct LiveChatSection: View {
     let voteGameId: String
     @Binding var showingChat: Bool
     let chatSocketService: ChatSocketService
+    let localization: LocalizationService
     
     @State private var messages: [ChatMessage] = []
     @State private var newMessage: String = ""
@@ -21,7 +22,7 @@ struct LiveChatSection: View {
             HStack {
                 Image(systemName: "bubble.left.and.bubble.right")
                     .foregroundColor(Color("PrimaryColor"))
-                Text("Live Chat")
+                Text(localization.localizedString(for: "live_chat"))
                     .font(.headline)
                     .fontWeight(.semibold)
                 Spacer()
@@ -48,7 +49,8 @@ struct LiveChatSection: View {
     LiveChatSection(
         voteGameId: "sample-vote-id",
         showingChat: .constant(true),
-        chatSocketService: ChatSocketService()
+        chatSocketService: ChatSocketService(),
+        localization: LocalizationService()
     )
     .padding()
 }

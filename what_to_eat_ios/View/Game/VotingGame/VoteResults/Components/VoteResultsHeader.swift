@@ -25,11 +25,6 @@ struct VoteResultsHeader: View {
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
             }
-            
-            Text(localization.localizedString(for: "voting_results"))
-                .font(.headline)
-                .foregroundColor(Color("PrimaryColor"))
-                .padding(.top, 8)
         }
     }
 }

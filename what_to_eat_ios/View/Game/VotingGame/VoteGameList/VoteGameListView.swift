@@ -19,6 +19,8 @@ struct VoteGameListView: View {
     @State private var searchText = ""
     @State private var showingLogin = false
     @State private var hasLoadedAfterLogin = false
+    @State private var selectedVoteGame: DishVote? = nil
+    
     let localization = LocalizationService.shared
     
     var body: some View {
@@ -51,6 +53,11 @@ struct VoteGameListView: View {
                 hasLoadedAfterLogin = false
             }
         }
+        .refreshable {
+            if (authViewModel.isAuthenticated) {
+                await viewModel.refreshVoteGames()
+            }
+        }
     }
     
     // MARK: - Login Required View
@@ -65,12 +72,12 @@ struct VoteGameListView: View {
             
             // Title and Message
             VStack(spacing: 12) {
-                Text("Login Required")
+                Text(localization.localizedString(for: "login_required"))
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                 
-                Text("Please login to access voting games and participate in community voting.")
+                Text(localization.localizedString(for: "login_required_message"))
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -84,7 +91,7 @@ struct VoteGameListView: View {
                 }) {
                     HStack {
                         Image(systemName: "person.fill")
-                        Text("Login to Continue")
+                        Text(localization.localizedString(for: "login_to_continue"))
                     }
                     .font(.headline)
                     .foregroundColor(.white)
@@ -98,7 +105,7 @@ struct VoteGameListView: View {
                 Button(action: {
                     dismiss()
                 }) {
-                    Text("Go Back")
+                    Text(localization.localizedString(for: "go_back"))
                         .font(.subheadline)
                         .foregroundColor(Color("PrimaryColor"))
                 }
@@ -106,7 +113,7 @@ struct VoteGameListView: View {
             
             Spacer()
         }
-        .navigationTitle("Voting Games")
+        .navigationTitle(localization.localizedString(for: "voting_games"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -115,7 +122,7 @@ struct VoteGameListView: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                        Text("Back")
+                        Text(localization.localizedString(for: "back"))
                     }
                     .foregroundColor(Color("PrimaryColor"))
                 }
@@ -132,7 +139,7 @@ struct VoteGameListView: View {
             // Vote Games List
             voteGamesList
         }
-        .navigationTitle("voting_game")
+        .navigationTitle(localization.localizedString(for: "voting_game"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -141,7 +148,7 @@ struct VoteGameListView: View {
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                        Text("Back")
+                        Text(localization.localizedString(for: "back"))
                     }
                     .foregroundColor(Color("PrimaryColor"))
                 }
@@ -164,6 +171,9 @@ struct VoteGameListView: View {
         .sheet(isPresented: $showingFilterSheet) {
             VoteGameFilterView(viewModel: viewModel)
         }
+        .sheet(item: $selectedVoteGame) { voteGame in
+            RealTimeVoteGameView(voteGameId: voteGame.id)
+        }
         .refreshable {
             await viewModel.refreshVoteGames()
         }
@@ -177,6 +187,26 @@ struct VoteGameListView: View {
                     viewModel.loadVoteGames()
                 }
             }
+        }
+        .onChange(of: showingFilterSheet) { _, newValue in
+            if !newValue {
+                // Refresh vote games when filter sheet is dismissed
+                Task { @MainActor in
+                    viewModel.loadVoteGames()
+                }
+            }
+        }
+        .onChange(of: selectedVoteGame) { _, newValue in
+            if newValue == nil {
+                // Refresh vote games when vote game sheet is dismissed
+                Task { @MainActor in
+                    viewModel.loadVoteGames()
+                }
+            }
+        }
+        .onAppear {
+            // Always reload the list when this view appears (e.g. after returning from a sheet)
+            viewModel.loadVoteGames()
         }
     }
     
@@ -195,7 +225,7 @@ struct VoteGameListView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
                 
-                TextField("Search vote games...", text: $searchText)
+                TextField(localization.localizedString(for: "search_vote_games"), text: $searchText)
                     .textFieldStyle(PlainTextFieldStyle())
                 
                 if !searchText.isEmpty {
@@ -247,17 +277,17 @@ struct VoteGameListView: View {
             } else if viewModel.voteGames.isEmpty {
                 EmptyStateView(
                     localization: localization,
-                    title: localization.localizedString(for: "No Vote Games Found"),
+                    title: localization.localizedString(for: "no_vote_games_found"),
                     subtitle: viewModel.hasActiveFilters || !searchText.isEmpty ?
-                    localization.localizedString(for:"Try adjusting your search or filter criteria") :
-                        localization.localizedString(for:"Create your first vote game to get started"),
+                    localization.localizedString(for:"try_adjusting_search") :
+                        localization.localizedString(for:"create_first_vote_game"),
                     systemImage: "list.bullet.clipboard",
                 )
             } else {
                 ScrollView {
                     LazyVStack(spacing: 16) {
                         ForEach(viewModel.voteGames) { voteGame in
-                            VoteGameCard(voteGame: voteGame)
+                            VoteGameCard(voteGame: voteGame, onVoteNow: { selectedVoteGame = voteGame })
                                 .onTapGesture {
                                     // Navigate to vote game detail
                                 }
@@ -284,7 +314,7 @@ struct VoteGameCard: View {
     let voteGame: DishVote
     @Environment(\.colorScheme) private var colorScheme
     @State private var showingResults = false
-    @State private var showingVoteGame = false
+    let onVoteNow: () -> Void
     
     private var totalVotes: Int {
         voteGame.dishVoteItems.reduce(0) { total, item in
@@ -310,7 +340,7 @@ struct VoteGameCard: View {
                     Spacer()
                     
                     // Status Badge
-                    Text("Active")
+                    Text(localization.localizedString(for: "active"))
                         .font(.caption2)
                         .fontWeight(.medium)
                         .padding(.horizontal, 8)
@@ -331,12 +361,12 @@ struct VoteGameCard: View {
             // Stats Row
             HStack(spacing: 20) {
                 // Dish Count
-                Label("\(dishCount) dishes", systemImage: "fork.knife")
+                Label("\(dishCount) " + localization.localizedString(for: "dishes"), systemImage: "fork.knife")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
                 // Vote Count
-                Label("\(totalVotes) votes", systemImage: "hand.raised.fill")
+                Label("\(totalVotes) " + localization.localizedString(for: "votes"), systemImage: "hand.raised.fill")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
@@ -360,7 +390,7 @@ struct VoteGameCard: View {
                 }) {
                     HStack {
                         Image(systemName: "chart.bar.fill")
-                        Text("View Results")
+                        Text(localization.localizedString(for: "view_results"))
                     }
                     .font(.subheadline)
                     .foregroundColor(Color("PrimaryColor"))
@@ -373,11 +403,11 @@ struct VoteGameCard: View {
                 Spacer()
                 
                 Button(action: {
-                    showingVoteGame = true
+                    onVoteNow()
                 }) {
                     HStack {
                         Image(systemName: "hand.raised.fill")
-                        Text("Vote Now")
+                        Text(localization.localizedString(for: "vote_now"))
                     }
                     .font(.subheadline)
                     .fontWeight(.medium)
@@ -398,15 +428,12 @@ struct VoteGameCard: View {
         .sheet(isPresented: $showingResults) {
             VoteResultsView(dishVote: voteGame)
         }
-        .sheet(isPresented: $showingVoteGame) {
-            RealTimeVoteGameView(voteGameId: voteGame.id)
-        }
     }
     
     // MARK: - Dish Preview Section
     private var dishPreviewSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Dishes in this vote:")
+            Text(localization.localizedString(for: "dishes_in_this_vote"))
                 .font(.caption)
                 .fontWeight(.medium)
                 .foregroundColor(.secondary)
@@ -418,7 +445,7 @@ struct VoteGameCard: View {
                     }
                     
                     if voteGame.dishVoteItems.count > 5 {
-                        Text("+\(voteGame.dishVoteItems.count - 5) more")
+                        Text("+\(voteGame.dishVoteItems.count - 5) " + localization.localizedString(for: "more"))
                             .font(.caption2)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
@@ -443,7 +470,7 @@ struct DishPreviewChip: View {
                 .font(.caption2)
                 .foregroundColor(item.isCustom ? .orange : Color("PrimaryColor"))
             
-            Text(item.isCustom ? (item.customTitle ?? "Custom") : item.slug)
+            Text(item.isCustom ? (item.customTitle ?? localization.localizedString(for: "custom")) : item.slug)
                 .font(.caption2)
                 .lineLimit(1)
         }

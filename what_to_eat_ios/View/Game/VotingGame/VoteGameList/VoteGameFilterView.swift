@@ -15,6 +15,8 @@ struct VoteGameFilterView: View {
     @State private var selectedSortBy: String
     @State private var selectedSortOrder: String
     
+    var localization = LocalizationService.shared
+    
     init(viewModel: VoteGameListViewModel) {
         self.viewModel = viewModel
         self._selectedSortBy = State(initialValue: viewModel.sortBy)
@@ -44,17 +46,17 @@ struct VoteGameFilterView: View {
                 // Bottom Action Bar
                 bottomActionBar
             }
-            .navigationTitle("Filter Vote Games")
+            .navigationTitle(localization.localizedString(for: "filter_vote_games"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("cancel") {
+                    Button(localization.localizedString(for: "cancel")) {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("reset") {
+                    Button(localization.localizedString(for: "reset")) {
                         resetFilters()
                     }
                     .disabled(!viewModel.hasActiveFilters)
@@ -71,7 +73,7 @@ struct VoteGameFilterView: View {
                     .font(.title2)
                     .foregroundColor(Color("PrimaryColor"))
                 
-                Text("Filter & Sort")
+                Text(localization.localizedString(for: "filter_and_sort"))
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
@@ -79,7 +81,7 @@ struct VoteGameFilterView: View {
                 Spacer()
             }
             
-            Text("Customize how vote games are displayed and sorted")
+            Text(localization.localizedString(for: "customize_vote_games_display"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.leading)
@@ -96,42 +98,42 @@ struct VoteGameFilterView: View {
     // MARK: - Sort Section
     private var sortSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Sort Options")
+            Text(localization.localizedString(for: "sort_options"))
                 .font(.headline)
                 .foregroundColor(.primary)
             
             // Sort By
             VStack(alignment: .leading, spacing: 8) {
-                Text("Sort By")
+                Text(localization.localizedString(for: "sort_by"))
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
                 
                 VStack(spacing: 8) {
                     SortOptionRow(
-                        title: "Creation Date",
-                        subtitle: "When the vote was created",
+                        title: localization.localizedString(for: "creation_date"),
+                        subtitle: localization.localizedString(for: "sort_by_creation_date"),
                         value: "createdAt",
                         selectedValue: $selectedSortBy
                     )
                     
                     SortOptionRow(
-                        title: "Title",
-                        subtitle: "Alphabetical by vote title",
+                        title: localization.localizedString(for: "title"),
+                        subtitle: localization.localizedString(for: "sort_by_title"),
                         value: "title",
                         selectedValue: $selectedSortBy
                     )
                     
                     SortOptionRow(
-                        title: "Vote Count",
-                        subtitle: "Number of votes received",
+                        title: localization.localizedString(for: "vote_count"),
+                        subtitle: localization.localizedString(for: "sort_by_vote_count"),
                         value: "voteCount",
                         selectedValue: $selectedSortBy
                     )
                     
                     SortOptionRow(
-                        title: "Dish Count",
-                        subtitle: "Number of dishes in the vote",
+                        title: localization.localizedString(for: "dish_count"),
+                        subtitle: localization.localizedString(for: "sort_by_dish_count"),
                         value: "dishCount",
                         selectedValue: $selectedSortBy
                     )
@@ -140,21 +142,21 @@ struct VoteGameFilterView: View {
             
             // Sort Order
             VStack(alignment: .leading, spacing: 8) {
-                Text("Sort Order")
+                Text(localization.localizedString(for: "sort_order"))
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.primary)
                 
                 HStack(spacing: 12) {
                     SortOrderButton(
-                        title: "Newest First",
+                        title: localization.localizedString(for: "newest_first"),
                         icon: "arrow.down",
                         value: "desc",
                         selectedValue: $selectedSortOrder
                     )
                     
                     SortOrderButton(
-                        title: "Oldest First",
+                        title: localization.localizedString(for: "oldest_first"),
                         icon: "arrow.up",
                         value: "asc",
                         selectedValue: $selectedSortOrder
@@ -173,14 +175,14 @@ struct VoteGameFilterView: View {
     // MARK: - Quick Actions Section
     private var quickActionsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Quick Filters")
+            Text(localization.localizedString(for: "quick_filters"))
                 .font(.headline)
                 .foregroundColor(.primary)
             
             VStack(spacing: 12) {
                 QuickFilterButton(
-                    title: "Most Popular",
-                    subtitle: "Sort by vote count (highest first)",
+                    title: localization.localizedString(for: "most_popular"),
+                    subtitle: localization.localizedString(for: "sort_by_vote_count_desc"),
                     icon: "hand.raised.fill",
                     action: {
                         selectedSortBy = "voteCount"
@@ -189,8 +191,8 @@ struct VoteGameFilterView: View {
                 )
                 
                 QuickFilterButton(
-                    title: "Recently Created",
-                    subtitle: "Show newest vote games first",
+                    title: localization.localizedString(for: "recently_created"),
+                    subtitle: localization.localizedString(for: "show_newest_first"),
                     icon: "clock.fill",
                     action: {
                         selectedSortBy = "createdAt"
@@ -199,8 +201,8 @@ struct VoteGameFilterView: View {
                 )
                 
                 QuickFilterButton(
-                    title: "Most Dishes",
-                    subtitle: "Votes with the most dish options",
+                    title: localization.localizedString(for: "most_dishes"),
+                    subtitle: localization.localizedString(for: "votes_with_most_dishes"),
                     icon: "fork.knife",
                     action: {
                         selectedSortBy = "dishCount"
@@ -209,8 +211,8 @@ struct VoteGameFilterView: View {
                 )
                 
                 QuickFilterButton(
-                    title: "Alphabetical",
-                    subtitle: "Sort by title A to Z",
+                    title: localization.localizedString(for: "alphabetical"),
+                    subtitle: localization.localizedString(for: "sort_by_title_az"),
                     icon: "textformat.abc",
                     action: {
                         selectedSortBy = "title"
@@ -238,7 +240,7 @@ struct VoteGameFilterView: View {
                 }) {
                     HStack {
                         Image(systemName: "arrow.counterclockwise")
-                        Text("Reset")
+                        Text(localization.localizedString(for: "reset"))
                     }
                     .font(.subheadline)
                     .foregroundColor(.gray)
@@ -258,7 +260,7 @@ struct VoteGameFilterView: View {
                 }) {
                     HStack {
                         Image(systemName: "checkmark")
-                        Text("Apply Filters")
+                        Text(localization.localizedString(for: "apply_filters"))
                             .fontWeight(.semibold)
                     }
                     .foregroundColor(.white)

@@ -10,13 +10,15 @@ import SwiftUI
 struct PlayerInfoHeader: View {
     let playerName: String
     
+    let localization = LocalizationService.shared
+    
     var body: some View {
         HStack {
             HStack(spacing: 8) {
                 Image(systemName: "person.circle.fill")
                     .foregroundColor(Color("PrimaryColor"))
                 
-                Text("Playing as: \(playerName)")
+                Text(String(format: localization.localizedString(for: "playing_as"), playerName))
                     .font(.subheadline)
                     .fontWeight(.medium)
             }

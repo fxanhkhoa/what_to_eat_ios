@@ -17,6 +17,8 @@ struct VotingGameCreateView: View {
     @State private var showingCustomDishSheet = false
     @State private var showingClearAlert = false
     
+    let localization = LocalizationService.shared
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
@@ -44,21 +46,21 @@ struct VotingGameCreateView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("cancel") {
+                    Button(localization.localizedString(for: "cancel")) {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("clear_all") {
+                    Button(localization.localizedString(for: "clear_all")) {
                         showingClearAlert = true
                     }
                     .disabled(viewModel.selectedDishes.isEmpty)
                 }
             }
-            .alert("confirm_clear", isPresented: $showingClearAlert) {
-                Button("cancel", role: .cancel) { }
-                Button("clear", role: .destructive) {
+            .alert(localization.localizedString(for: "confirm_clear"), isPresented: $showingClearAlert) {
+                Button(localization.localizedString(for: "cancel"), role: .cancel) { }
+                Button(localization.localizedString(for: "clear"), role: .destructive) {
                     viewModel.clearAllDishes()
                 }
             }
@@ -84,7 +86,7 @@ struct VotingGameCreateView: View {
                     .font(.title2)
                     .foregroundColor(Color("PrimaryColor"))
                 
-                Text("create_vote")
+                Text(localization.localizedString(for: "create_vote"))
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
@@ -92,7 +94,7 @@ struct VotingGameCreateView: View {
                 Spacer()
             }
             
-            Text("add_dish_prompt")
+            Text(localization.localizedString(for: "add_dish_prompt"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.leading)
@@ -111,21 +113,21 @@ struct VotingGameCreateView: View {
         VStack(spacing: 16) {
             // Vote Title Input
             VStack(alignment: .leading, spacing: 8) {
-                Text("vote_title")
+                Text(localization.localizedString(for: "vote_title"))
                     .font(.headline)
                     .foregroundColor(.primary)
                 
-                TextField("enter_vote_title", text: $viewModel.voteTitle)
+                TextField(localization.localizedString(for: "enter_vote_title"), text: $viewModel.voteTitle)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
             }
             
             // Vote Description Input
             VStack(alignment: .leading, spacing: 8) {
-                Text("vote_description")
+                Text(localization.localizedString(for: "vote_description"))
                     .font(.headline)
                     .foregroundColor(.primary)
                 
-                TextField("vote_description", text: $viewModel.voteDescription, axis: .vertical)
+                TextField(localization.localizedString(for: "vote_description"), text: $viewModel.voteDescription, axis: .vertical)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .lineLimit(3...6)
             }
@@ -142,7 +144,7 @@ struct VotingGameCreateView: View {
     private var selectedDishesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("selected_dishes")
+                Text(localization.localizedString(for: "selected_dishes"))
                     .font(.headline)
                     .foregroundColor(.primary)
                 
@@ -188,7 +190,7 @@ struct VotingGameCreateView: View {
                 .font(.system(size: 40))
                 .foregroundColor(.gray)
             
-            Text("no_dishes_selected")
+            Text(localization.localizedString(for: "no_dishes_selected"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -200,7 +202,7 @@ struct VotingGameCreateView: View {
     // MARK: - Add Dishes Section
     private var addDishesSection: some View {
         VStack(spacing: 12) {
-            Text("add_dishes")
+            Text(localization.localizedString(for: "add_dishes"))
                 .font(.headline)
                 .foregroundColor(.primary)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -212,7 +214,7 @@ struct VotingGameCreateView: View {
                 }) {
                     HStack {
                         Image(systemName: "magnifyingglass")
-                        Text("search_and_add")
+                        Text(localization.localizedString(for: "search_and_add"))
                             .multilineTextAlignment(.center)
                     }
                     .font(.subheadline)
@@ -229,7 +231,7 @@ struct VotingGameCreateView: View {
                 }) {
                     HStack {
                         Image(systemName: "plus.circle")
-                        Text("add_custom_dish")
+                        Text(localization.localizedString(for: "add_custom_dish"))
                             .multilineTextAlignment(.center)
                     }
                     .font(.subheadline)
@@ -260,11 +262,11 @@ struct VotingGameCreateView: View {
             
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("\(viewModel.selectedDishes.count) dishes")
+                    Text("\(viewModel.selectedDishes.count) " + localization.localizedString(for: "dishes"))
                         .font(.headline)
                         .foregroundColor(.primary)
                     
-                    Text("minimum_dishes_required")
+                    Text(localization.localizedString(for: "minimum_dishes_required"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -280,7 +282,7 @@ struct VotingGameCreateView: View {
                                 .scaleEffect(0.8)
                         }
                         
-                        Text("create_voting_session")
+                        Text(localization.localizedString(for: "create_voting_session"))
                             .fontWeight(.semibold)
                     }
                     .foregroundColor(.white)
@@ -305,6 +307,8 @@ struct SelectedDishRow: View {
     let onRemove: () -> Void
     @Environment(\.colorScheme) private var colorScheme
     
+    var localization: LocalizationService { LocalizationService.shared }
+    
     var body: some View {
         HStack(spacing: 12) {
             // Dish Image/Icon
@@ -326,14 +330,14 @@ struct SelectedDishRow: View {
             // Dish Info
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text(item.isCustom ? (item.customTitle ?? "custom_dish") : item.slug)
+                    Text(item.isCustom ? (item.customTitle ?? localization.localizedString(for: "custom_dish")) : item.slug)
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
                         .lineLimit(1)
                     
                     if item.isCustom {
-                        Text("custom_dish")
+                        Text(localization.localizedString(for: "custom_dish"))
                             .font(.caption2)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -341,7 +345,7 @@ struct SelectedDishRow: View {
                             .foregroundColor(.orange)
                             .cornerRadius(4)
                     } else {
-                        Text("from_database")
+                        Text(localization.localizedString(for: "from_database"))
                             .font(.caption2)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
