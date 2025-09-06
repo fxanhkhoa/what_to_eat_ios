@@ -314,6 +314,7 @@ struct VoteGameCard: View {
     let voteGame: DishVote
     @Environment(\.colorScheme) private var colorScheme
     @State private var showingResults = false
+    @State private var showingShareSheet = false
     let onVoteNow: () -> Void
     
     private let localization = LocalizationService.shared
@@ -328,9 +329,23 @@ struct VoteGameCard: View {
         voteGame.dishVoteItems.count
     }
     
+    // Deep link for the vote game
+    private var shareURL: URL? {
+        URL(string: "whattoeat://vote/\(voteGame.id)")
+    }
+    
+    // Share message
+    private var shareMessage: String {
+        let message = String(format: localization.localizedString(for: "share_vote_game_message"), voteGame.title)
+        if let url = shareURL {
+            return "\(message)\n\n\(url.absoluteString)"
+        }
+        return message
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Header
+            // Header with Share Button
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text(voteGame.title)
@@ -340,6 +355,18 @@ struct VoteGameCard: View {
                         .lineLimit(2)
                     
                     Spacer()
+                    
+                    // Share Button
+                    Button(action: {
+                        showingShareSheet = true
+                    }) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.secondary)
+                            .padding(8)
+                            .background(Color(.systemGray5))
+                            .clipShape(Circle())
+                    }
                     
                     // Status Badge
                     Text(localization.localizedString(for: "active"))
@@ -429,6 +456,9 @@ struct VoteGameCard: View {
         )
         .sheet(isPresented: $showingResults) {
             VoteResultsView(dishVote: voteGame)
+        }
+        .sheet(isPresented: $showingShareSheet) {
+            EnhancedShareSheet(activityItems: [shareMessage], shareURL: shareURL)
         }
     }
     
