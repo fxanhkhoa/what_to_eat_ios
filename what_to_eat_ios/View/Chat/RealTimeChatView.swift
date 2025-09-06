@@ -23,6 +23,8 @@ struct RealTimeChatView: View {
     // Get current user id from AuthService
     @ObservedObject private var authService = AuthService.shared
     
+    private let localization = LocalizationService.shared
+    
     // Custom initializer
     init(roomId: String, roomType: ChatRoomType, chatService: ChatSocketService) {
         self.roomId = roomId
@@ -91,7 +93,7 @@ struct RealTimeChatView: View {
                 anchorMessageId = chatService.messages.first?.id
                 await loadMoreMessages()
             }
-            .onChange(of: chatService.messages.count) { _ in
+            .onChange(of: chatService.messages.count) {
                 // If loading more, scroll to anchor message (first visible before load)
                 if let anchorId = anchorMessageId, !chatService.isLoadingMore {
                     withAnimation(.easeInOut(duration: 0.3)) {
@@ -137,27 +139,23 @@ struct RealTimeChatView: View {
     private var typingIndicatorText: String {
         let typingUserIds = chatService.typingUsers
         guard !typingUserIds.isEmpty else { return "" }
-        
-        // Get the names of users who are typing
         let typingUserNames = typingUserIds.compactMap { userId in
-            // First try to find the user in onlineUsers
             if let onlineUser = chatService.onlineUsers.first(where: { $0.id == userId }) {
                 return onlineUser.name
             }
-            // If not found in online users, return the userId as fallback
             return userId
         }
-        
         let count = typingUserNames.count
         if count == 1 {
-            return "\(typingUserNames[0]) is typing..."
+            return "\(typingUserNames[0]) " + localization.localizedString(for: "chat_is_typing")
         } else if count == 2 {
-            return "\(typingUserNames[0]) and \(typingUserNames[1]) are typing..."
+            return "\(typingUserNames[0]) " + localization.localizedString(for: "chat_and") + " \(typingUserNames[1]) " + localization.localizedString(for: "chat_are_typing")
         } else if count > 2 {
             let firstNames = typingUserNames.prefix(2).joined(separator: ", ")
-            return "\(firstNames) and \(count - 2) others are typing..."
+            let othersCount = count - 2
+            let othersString = String(format: localization.localizedString(for: "chat_and_others_are_typing"), othersCount)
+            return "\(firstNames) \(othersString)"
         }
-        
         return ""
     }
     
@@ -165,7 +163,7 @@ struct RealTimeChatView: View {
     
     private var messageInputView: some View {
         HStack(spacing: 12) {
-            TextField("Type a message...", text: $messageText, axis: .vertical)
+            TextField(localization.localizedString(for: "chat_type_message_placeholder"), text: $messageText, axis: .vertical)
                 .textFieldStyle(PlainTextFieldStyle())
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
@@ -201,7 +199,7 @@ struct RealTimeChatView: View {
                         .foregroundColor(.secondary)
                 }
                 
-                Text(chatService.isLoadingMore ? "Loading..." : "Load more messages")
+                Text(chatService.isLoadingMore ? localization.localizedString(for: "chat_loading") : localization.localizedString(for: "chat_load_more_messages"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

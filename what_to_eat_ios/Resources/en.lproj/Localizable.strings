@@ -48,6 +48,7 @@
 "notifications" = "Notifications";
 "about" = "About";
 "version" = "Version";
+"select_language" = "Select Language";
 
 // Game
 "game_title" = "Food Game";
@@ -72,6 +73,7 @@
 "flipping_card_desc" = "Flip cards to reveal delicious dishes!";
 "vote_game" = "Vote Game";
 "vote_game_desc" = "Vote for your favorite dishes and see what others think!";
+"all_results" = "All Results";
 
 // Contact Section
 "contact_us" = "Contact Us";
@@ -424,3 +426,13 @@
 "loading_voters" = "Loading voters...";
 "cast_your_vote" = "Cast Your Vote";
 "submit_vote" = "Submit Vote";
+"vote_statistics" = "Vote Statistics";
+"total_votes" = "Total Votes";
+"total_dishes" = "Total Dishes";
+"chat_type_message_placeholder" = "Type a message...";
+"chat_loading" = "Loading...";
+"chat_load_more_messages" = "Load more messages";
+"chat_and" = "and";
+
+"english" = "English";
+"vietnamese" = "Tiếng Việt";

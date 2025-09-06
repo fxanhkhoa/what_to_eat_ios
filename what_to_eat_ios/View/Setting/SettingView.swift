@@ -12,22 +12,24 @@ struct SettingView: View {
     @ObservedObject private var localizationObserver = LocalizationObserver()
     @State private var selectedLanguage: Language = LocalizationService.shared.currentLanguage
     
+    private let localization = LocalizationService.shared
+    
     var body: some View {
         NavigationView {
             List {
-                Section(header: Text("Appearance")) {
+                Section(header: Text(localization.localizedString(for: "appearance"))) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Theme")
+                        Text(localization.localizedString(for: "theme"))
                             .fontWeight(.medium)
                         
-                        Picker("Select Theme", selection: $themeManager.selectedTheme) {
-                            Label("Light", systemImage: "sun.max.fill")
+                        Picker(localization.localizedString(for: "select_theme"), selection: $themeManager.selectedTheme) {
+                            Label(localization.localizedString(for: "light"), systemImage: "sun.max.fill")
                                 .tag(Theme.light)
                             
-                            Label("Dark", systemImage: "moon.fill")
+                            Label(localization.localizedString(for: "dark"), systemImage: "moon.fill")
                                 .tag(Theme.dark)
                             
-                            Label("System", systemImage: "gearshape.fill")
+                            Label(localization.localizedString(for: "system"), systemImage: "gearshape.fill")
                                 .tag(Theme.system)
                         }
                         .pickerStyle(.segmented)
@@ -40,21 +42,21 @@ struct SettingView: View {
                         HStack {
                             Image(systemName: themeManager.isDarkMode ? "moon.fill" : "sun.max.fill")
                                 .foregroundColor(themeManager.isDarkMode ? .purple : .orange)
-                            Text("Dark Mode")
+                            Text(localization.localizedString(for: "dark_mode"))
                         }
                     }
                     .tint(AppColors.accent)
                 }
                 
                 // Add Language Section
-                Section(header: Text("Language")) {
+                Section(header: Text(localization.localizedString(for: "language"))) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Select Language")
+                        Text(localization.localizedString(for: "select_language"))
                             .fontWeight(.medium)
                             
-                        Picker("Language", selection: $selectedLanguage) {
-                            Text("English").tag(Language.english)
-                            Text("Tiếng Việt").tag(Language.vietnamese)
+                        Picker(localization.localizedString(for: "language"), selection: $selectedLanguage) {
+                            Text(localization.localizedString(for: "english")).tag(Language.english)
+                            Text(localization.localizedString(for: "vietnamese")).tag(Language.vietnamese)
                         }
                         .pickerStyle(.segmented)
                         .padding(.vertical, 5)
@@ -65,16 +67,16 @@ struct SettingView: View {
                     .padding(.vertical, 5)
                 }
                 
-                Section(header: Text("About")) {
+                Section(header: Text(localization.localizedString(for: "about"))) {
                     HStack {
-                        Text("Version")
+                        Text(localization.localizedString(for: "version"))
                         Spacer()
                         Text("1.0.0")
                             .foregroundColor(AppColors.secondaryText)
                     }
                 }
             }
-            .navigationTitle("Settings")
+            .navigationTitle(localization.localizedString(for: "settings"))
             .background(AppColors.primaryBackground)
         }
         .accentColor(AppColors.accent)

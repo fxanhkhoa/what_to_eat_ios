@@ -55,13 +55,60 @@ class AuthService: ObservableObject {
            let user = try? JSONDecoder().decode(AppUser.self, from: userData) {
             DispatchQueue.main.async {
                 self.user = user
-                self.isAuthenticated = true
-                // Fetch profile after loading user if we have a valid token
+                // Do not set isAuthenticated yet, only after successful profile fetch
                 if self.authManager.isAuthenticated {
-                    self.fetchUserProfile()
+                    self.isLoading = true
+                    self.fetchUserProfileForLoadUser()
+                } else {
+                    // Token not available, clear user
+                    self.signOut()
                 }
             }
+        } else {
+            // No user data, ensure state is cleared
+            self.signOut()
         }
+    }
+    
+    // Helper to fetch profile and handle token expiration for loadUser
+    private func fetchUserProfileForLoadUser() {
+        guard let url = URL(string: "\(APIConstants.baseURL)/\(prefix)/profile") else {
+            logger.error("Invalid URL for user profile")
+            DispatchQueue.main.async {
+                self.isLoading = false
+                self.errorMessage = "Invalid URL for user profile"
+            }
+            return
+        }
+        URLSession.shared.dataTaskPublisher(for: authManager.createAuthenticatedRequest(url: url, method: "GET"))
+            .tryMap { data, response -> Data in
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    print("[DEBUG] Raw profile response: \n\(jsonString)")
+                }
+                return data
+            }
+            .decode(type: UserModel.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    self?.isLoading = false
+                    switch completion {
+                    case .finished:
+                        self?.isAuthenticated = true
+                        break
+                    case .failure(let error):
+                        self?.logger.error("Failed to get profile in loadUser: \(error.localizedDescription)")
+                        // On authentication error, clear user and tokens
+                        self?.signOut()
+                    }
+                },
+                receiveValue: { [weak self] userProfile in
+                    self?.logger.info("Successfully fetched user profile: \(userProfile.email)")
+                    self?.profile = userProfile
+                    self?.errorMessage = nil
+                }
+            )
+            .store(in: &cancellables)
     }
     
     // MARK: - User Profile Management

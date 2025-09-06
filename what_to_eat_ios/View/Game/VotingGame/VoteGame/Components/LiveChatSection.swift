@@ -50,7 +50,7 @@ struct LiveChatSection: View {
         voteGameId: "sample-vote-id",
         showingChat: .constant(true),
         chatSocketService: ChatSocketService(),
-        localization: LocalizationService()
+        localization: LocalizationService.shared
     )
     .padding()
 }

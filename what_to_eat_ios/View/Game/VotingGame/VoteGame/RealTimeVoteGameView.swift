@@ -78,7 +78,8 @@ struct RealTimeVoteGameView: View {
                             LiveChatSection(
                                 voteGameId: voteGameId,
                                 showingChat: $showingChat,
-                                chatSocketService: chatSocketService
+                                chatSocketService: chatSocketService,
+                                localization: localization
                             )
                         }
                         .padding()

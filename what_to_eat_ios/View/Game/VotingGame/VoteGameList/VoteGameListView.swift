@@ -316,6 +316,8 @@ struct VoteGameCard: View {
     @State private var showingResults = false
     let onVoteNow: () -> Void
     
+    private let localization = LocalizationService.shared
+    
     private var totalVotes: Int {
         voteGame.dishVoteItems.reduce(0) { total, item in
             total + item.voteUser.count + item.voteAnonymous.count
@@ -463,6 +465,8 @@ struct VoteGameCard: View {
 // MARK: - Dish Preview Chip
 struct DishPreviewChip: View {
     let item: DishVoteItem
+    
+    private let localization = LocalizationService.shared
     
     var body: some View {
         HStack(spacing: 4) {

@@ -44,6 +44,7 @@
 "notifications" = "Thông báo";
 "about" = "Giới thiệu";
 "version" = "Phiên bản";
+"select_language" = "Chọn ngôn ngữ";
 
 // Game
 "game_title" = "Trò chơi thức ăn";
@@ -56,19 +57,17 @@
 "featured_games" = "Trò chơi nổi bật";
 "coming_soon" = "Sắp ra mắt";
 "play_now" = "Chơi ngay";
-
+"wheel_of_fortune_desc" = "Quay vòng để chọn món ăn ngẫu nhiên.";
+"flipping_card_desc" = "Lật thẻ để biết món ăn của bạn.";
+"vote_game" = "Bình chọn";
+"vote_game_desc" = "Bình chọn cùng bạn bè để chọn món ăn.";
+"all_results" = "Tất cả kết quả";
 
 "untitle" = "Không có tiêu đề";
 "home_banner_title" = "Đói Bụng? Ăn Gì?";
 "home_banner_subtitle" = "Khám phá thế giới ẩm thực và tìm kiếm bữa ăn tiếp theo một cách thuận tiện, mọi lúc mọi nơi.";
 "find_your_meal" = "Tìm Món Ăn";
 "mins" = "phút";
-"wheel_of_fortune" = "Wheel of Fortune";
-"wheel_of_fortune_desc" = "Spin the wheel to discover your next meal!";
-"flipping_card" = "Flipping Card";
-"flipping_card_desc" = "Flip cards to reveal delicious dishes!";
-"vote_game" = "Vote Game";
-"vote_game_desc" = "Vote for your favorite dishes and see what others think!";
 
 // Connection Status Bar
 "live" = "Trực tuyến";
@@ -405,3 +404,13 @@
 "loading_voters" = "Đang tải danh sách bình chọn...";
 "cast_your_vote" = "Bình chọn của bạn";
 "submit_vote" = "Gửi bình chọn";
+"vote_statistics" = "Thống kê bình chọn";
+"total_votes" = "Tổng số lượt bình chọn";
+"total_dishes" = "Tổng số món ăn";
+"chat_type_message_placeholder" = "Nhập tin nhắn...";
+"chat_loading" = "Đang tải...";
+"chat_load_more_messages" = "Tải thêm tin nhắn";
+"chat_and" = "và";
+
+"english" = "English";
+"vietnamese" = "Tiếng Việt";
